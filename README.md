@@ -58,6 +58,8 @@ No perfil `dev` (padrão local), a aplicação cria 22 categorias, o administrad
 
 As telas usam Tailwind CSS compilado em `src/main/resources/static/css/app.css`. O CSS gerado acompanha o repositório. Ao alterar classes nos templates, execute `npm install` e `npm run build:css` para atualizá-lo.
 
+Na Etapa I, sem autenticação integrada, o perfil `dev` oferece `/dev/correntistas` para escolher um correntista de teste. A listagem `/contas` mostra somente as contas da pessoa selecionada nessa sessão. O seletor não existe fora do perfil `dev`.
+
 ---
 
 ## 🌿 Convenção de Branches

@@ -14,4 +14,6 @@ public interface ContaRepository extends JpaRepository<Conta, Long> {
     boolean existsByCorrentistaIdAndNumeroIgnoreCase(Long correntistaId, String numero);
 
     Optional<Conta> findByCorrentistaIdAndNumero(Long correntistaId, String numero);
+
+    Optional<Conta> findByIdAndCorrentistaId(Long id, Long correntistaId);
 }
