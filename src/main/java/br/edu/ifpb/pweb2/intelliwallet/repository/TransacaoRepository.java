@@ -1,7 +1,6 @@
 package br.edu.ifpb.pweb2.intelliwallet.repository;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -13,5 +12,4 @@ public interface TransacaoRepository extends JpaRepository<Transacao, Long> {
 
     long countByContaId(Long contaId);
 
-    List<Transacao> findByContaIdOrderByDataDescIdDesc(Long contaId);
 }
