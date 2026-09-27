@@ -1,51 +1,55 @@
 package br.edu.ifpb.pweb2.intelliwallet.model;
 
+import jakarta.persistence.*;
+import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "transacoes")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Transacao {
+public class Transacao implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @Column(nullable = false)
     private LocalDate data;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 150)
     private String descricao;
 
-    @Column(nullable = false, precision = 14, scale = 2)
+    @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal valor;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Movimento movimento;
+    @Column(nullable = false, length = 10)
+    private String movimento;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "categoria_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "categoria_id")
     private Categoria categoria;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "conta_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "conta_id")
     private Conta conta;
+
+    @OneToOne(mappedBy = "transacao", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Comentario comentario;
+
+    public Transacao(LocalDate data, String descricao, BigDecimal valor, String movimento,
+                     Categoria categoria, Conta conta) {
+        this.data = data;
+        this.descricao = descricao;
+        this.valor = valor;
+        this.movimento = movimento;
+        this.categoria = categoria;
+        this.conta = conta;
+    }
 }

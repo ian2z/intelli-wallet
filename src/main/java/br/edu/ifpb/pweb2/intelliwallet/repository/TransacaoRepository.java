@@ -1,17 +1,21 @@
 package br.edu.ifpb.pweb2.intelliwallet.repository;
 
-import java.time.LocalDate;
-import java.util.List;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import br.edu.ifpb.pweb2.intelliwallet.model.Transacao;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface TransacaoRepository extends JpaRepository<Transacao, Long> {
+import java.util.List;
+import java.util.Optional;
 
-    boolean existsByContaIdAndDescricaoAndData(Long contaId, String descricao, LocalDate data);
+@Repository
+public interface TransacaoRepository extends JpaRepository<Transacao, Integer> {
 
-    long countByContaId(Long contaId);
+    // Transações de uma conta. O @EntityGraph traz categoria e comentário
+    @EntityGraph(attributePaths = {"categoria", "comentario"})
+    List<Transacao> findByContaIdOrderByDataDescIdDesc(Integer contaId);
 
-    List<Transacao> findByContaIdOrderByDataDescIdDesc(Long contaId);
+    // Garante que a transação pertence à conta informada
+    @EntityGraph(attributePaths = {"categoria", "comentario"})
+    Optional<Transacao> findByIdAndContaId(Integer id, Integer contaId);
 }
