@@ -35,9 +35,10 @@ Aplicação web de carteira inteligente e controle financeiro, desenvolvida para
    ```
 
 2. **Inicializar o banco de dados (PostgreSQL):**
-   > *Nota:* O projeto conta com o módulo `spring-boot-docker-compose`, que pode inicializar o serviço automaticamente ao rodar a aplicação. Caso queira iniciar manualmente via terminal:
+   O ambiente local usa PostgreSQL 17. As configurações padrão de desenvolvimento são banco e usuário `intelliwallet`, senha `intelliwallet_dev` e porta `5432`. Para alterar esses valores, defina `INTELLI_DB_NAME`, `INTELLI_DB_USER`, `INTELLI_DB_PASSWORD` e `INTELLI_DB_PORT` em um arquivo `.env` local (ignorado pelo Git) e use os mesmos valores no ambiente da aplicação. A senha padrão serve apenas para desenvolvimento. O Docker Compose é iniciado manualmente para que os comandos Maven não dependam do daemon Docker.
    ```bash
    docker compose up -d
+   docker compose ps
    ```
 
 3. **Compilar e rodar a aplicação:**
@@ -52,6 +53,14 @@ Aplicação web de carteira inteligente e controle financeiro, desenvolvida para
 
 4. **Acessar a aplicação:**
    - Abra o navegador em: [http://localhost:8080](http://localhost:8080)
+
+O arquivo `src/main/resources/data.sql` insere as 22 categorias predefinidas. No perfil `dev` (padrão local), `data-dev.sql` adiciona o administrador `admin` e o correntista `teste`, com duas contas e transações de exemplo. As senhas de exemplo são `admin_dev_123` e `teste_dev_123`; os valores gravados são hashes BCrypt. Use outro perfil e outro banco fora do desenvolvimento para não carregar os dados de demonstração. Os scripts podem ser executados novamente sem duplicar registros.
+
+As telas usam Tailwind CSS compilado em `src/main/resources/static/css/app.css`. O CSS gerado acompanha o repositório. Ao alterar classes nos templates, execute `npm install` e `npm run build:css` para atualizá-lo.
+
+Na Etapa I, sem autenticação integrada, o perfil `dev` oferece `/dev/correntistas` para escolher um correntista de teste. A listagem `/contas` mostra somente as contas da pessoa selecionada nessa sessão. O seletor não existe fora do perfil `dev`.
+
+Após escolher um correntista, use `/contas/nova` para criar uma conta corrente ou um cartão. Cartões exigem o dia de fechamento entre 1 e 31; contas correntes não usam esse campo.
 
 ---
 

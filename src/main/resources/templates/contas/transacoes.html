@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Transações')}"></head>
+<body class="min-h-screen bg-slate-50 text-slate-900 antialiased">
+<header th:replace="~{fragments/layout :: cabecalho}"></header>
+
+<main class="mx-auto max-w-6xl px-5 py-12 sm:py-16">
+    <a th:href="@{/contas}" class="text-sm font-medium text-teal-800 underline-offset-4 hover:underline">Voltar às contas</a>
+    <h1 class="mt-6 text-3xl font-semibold tracking-tight text-slate-950" th:text="${conta.descricao}">Transações da conta</h1>
+    <p class="mt-2 text-slate-700">Movimentos registrados nesta conta.</p>
+
+    <div th:if="${#lists.isEmpty(transacoes)}" class="mt-8 rounded-xl bg-white p-8 shadow-sm">
+        <p class="text-slate-700">Esta conta ainda não possui transações.</p>
+    </div>
+
+    <div th:unless="${#lists.isEmpty(transacoes)}" class="mt-8 overflow-x-auto rounded-xl bg-white shadow-sm">
+        <table class="min-w-full text-left text-sm">
+            <caption class="sr-only">Transações da conta selecionada</caption>
+            <thead class="border-b border-slate-200 bg-slate-100 text-slate-700">
+                <tr>
+                    <th scope="col" class="px-5 py-4 font-semibold">Data</th>
+                    <th scope="col" class="px-5 py-4 font-semibold">Descrição</th>
+                    <th scope="col" class="px-5 py-4 font-semibold">Categoria</th>
+                    <th scope="col" class="px-5 py-4 font-semibold">Movimento</th>
+                    <th scope="col" class="px-5 py-4 text-right font-semibold">Valor</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+                <tr th:each="transacao : ${transacoes}">
+                    <td class="px-5 py-4 tabular-nums text-slate-700" th:text="${#temporals.format(transacao.data, 'dd/MM/yyyy')}">01/09/2026</td>
+                    <td class="px-5 py-4 font-medium text-slate-950" th:text="${transacao.descricao}">Descrição</td>
+                    <td class="px-5 py-4 text-slate-700" th:text="${transacao.categoria.nome}">Categoria</td>
+                    <td class="px-5 py-4 text-slate-700" th:text="${transacao.movimento.name() == 'CREDITO' ? 'Crédito' : 'Débito'}">Movimento</td>
+                    <td class="px-5 py-4 text-right font-semibold tabular-nums text-slate-950" th:text="|R$ ${transacao.valor}|">R$ 0,00</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+</body>
+</html>
