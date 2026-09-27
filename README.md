@@ -56,6 +56,8 @@ Aplicação web de carteira inteligente e controle financeiro, desenvolvida para
 
 No perfil `dev` (padrão local), a aplicação cria 22 categorias, o administrador `admin` e o correntista `teste`, com duas contas e transações de exemplo. As senhas iniciais são `admin_dev_123` e `teste_dev_123`; substitua-as pelas variáveis `INTELLI_SEED_ADMIN_PASSWORD` e `INTELLI_SEED_DEMO_PASSWORD` se necessário. Ative outro perfil fora do desenvolvimento para não carregar usuários e dados de demonstração.
 
+As telas usam Tailwind CSS compilado em `src/main/resources/static/css/app.css`. O CSS gerado acompanha o repositório. Ao alterar classes nos templates, execute `npm install` e `npm run build:css` para atualizá-lo.
+
 ---
 
 ## 🌿 Convenção de Branches

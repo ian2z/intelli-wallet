@@ -1,10 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Início')}"></head>
+<body class="min-h-screen bg-slate-50 text-slate-900 antialiased">
+<header th:replace="~{fragments/layout :: cabecalho}"></header>
+<div th:replace="~{fragments/layout :: mensagem}"></div>
 
+<main class="mx-auto max-w-6xl px-5 py-16 sm:py-24">
+    <div class="max-w-3xl">
+        <h1 class="text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">Suas contas, em um só lugar.</h1>
+        <p class="mt-6 max-w-2xl text-lg leading-relaxed text-slate-700">Cadastre-se para organizar contas correntes e cartões e registrar seus movimentos financeiros.</p>
+        <div class="mt-9 flex flex-wrap gap-3">
+            <a th:href="@{/cadastro}" class="rounded-lg bg-teal-700 px-5 py-3 font-semibold text-white hover:bg-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">Criar meu cadastro</a>
+            <a th:href="@{/contas}" class="rounded-lg border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-800 hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">Ver minhas contas</a>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
 </body>
 </html>
