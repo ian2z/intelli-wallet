@@ -35,9 +35,10 @@ Aplicação web de carteira inteligente e controle financeiro, desenvolvida para
    ```
 
 2. **Inicializar o banco de dados (PostgreSQL):**
-   > *Nota:* O projeto conta com o módulo `spring-boot-docker-compose`, que pode inicializar o serviço automaticamente ao rodar a aplicação. Caso queira iniciar manualmente via terminal:
+   O ambiente local usa PostgreSQL 17. As configurações padrão de desenvolvimento são banco e usuário `intelliwallet`, senha `intelliwallet_dev` e porta `5432`. Para alterar esses valores, defina `INTELLI_DB_NAME`, `INTELLI_DB_USER`, `INTELLI_DB_PASSWORD` e `INTELLI_DB_PORT` em um arquivo `.env` local (ignorado pelo Git) e use os mesmos valores no ambiente da aplicação. A senha padrão serve apenas para desenvolvimento. O Docker Compose é iniciado manualmente para que os comandos Maven não dependam do daemon Docker.
    ```bash
    docker compose up -d
+   docker compose ps
    ```
 
 3. **Compilar e rodar a aplicação:**
