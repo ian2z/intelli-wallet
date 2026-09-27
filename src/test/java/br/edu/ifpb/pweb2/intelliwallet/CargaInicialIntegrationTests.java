@@ -4,28 +4,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.DefaultApplicationArguments;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.sql.DataSource;
 
 import br.edu.ifpb.pweb2.intelliwallet.model.Conta;
 import br.edu.ifpb.pweb2.intelliwallet.repository.CategoriaRepository;
 import br.edu.ifpb.pweb2.intelliwallet.repository.ContaRepository;
 import br.edu.ifpb.pweb2.intelliwallet.repository.CorrentistaRepository;
 import br.edu.ifpb.pweb2.intelliwallet.repository.TransacaoRepository;
-import br.edu.ifpb.pweb2.intelliwallet.service.CategoriaSeed;
-import br.edu.ifpb.pweb2.intelliwallet.service.DadosDemonstracaoSeed;
 
 @SpringBootTest
 @Transactional
 class CargaInicialIntegrationTests {
 
     @Autowired
-    private CategoriaSeed categoriaSeed;
-
-    @Autowired
-    private DadosDemonstracaoSeed dadosDemonstracaoSeed;
+    private DataSource dataSource;
 
     @Autowired
     private CategoriaRepository categoriaRepository;
@@ -40,14 +38,13 @@ class CargaInicialIntegrationTests {
     private TransacaoRepository transacaoRepository;
 
     @Test
-    void cargaInicialNaoDuplicaDadosAoExecutarNovamente() throws Exception {
+    void cargaInicialNaoDuplicaDadosAoExecutarNovamente() {
         long correntistas = correntistaRepository.count();
         long contas = contaRepository.count();
         long transacoes = transacaoRepository.count();
 
-        DefaultApplicationArguments args = new DefaultApplicationArguments(new String[0]);
-        categoriaSeed.run(args);
-        dadosDemonstracaoSeed.run(args);
+        new ResourceDatabasePopulator(new ClassPathResource("data.sql"),
+                new ClassPathResource("data-dev.sql")).execute(dataSource);
 
         assertThat(categoriaRepository.count()).isEqualTo(22);
         assertThat(correntistaRepository.count()).isEqualTo(correntistas);
