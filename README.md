@@ -60,6 +60,8 @@ As telas usam Tailwind CSS compilado em `src/main/resources/static/css/app.css`.
 
 Na Etapa I, sem autenticação integrada, o perfil `dev` oferece `/dev/correntistas` para escolher um correntista de teste. A listagem `/contas` mostra somente as contas da pessoa selecionada nessa sessão. O seletor não existe fora do perfil `dev`.
 
+Após escolher um correntista, use `/contas/nova` para criar uma conta corrente ou um cartão. Cartões exigem o dia de fechamento entre 1 e 31; contas correntes não usam esse campo.
+
 ---
 
 ## 🌿 Convenção de Branches

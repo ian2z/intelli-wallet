@@ -11,12 +11,16 @@
             <h1 class="text-3xl font-semibold tracking-tight text-slate-950">Minhas contas</h1>
             <p class="mt-2 text-slate-700" th:text="|Contas de ${correntista.nome}|">Contas do correntista</p>
         </div>
-        <a th:if="${modoDev}" th:href="@{/dev/correntistas}" class="text-sm font-medium text-teal-800 underline-offset-4 hover:underline">Trocar correntista</a>
+        <div class="flex items-center gap-4">
+            <a th:if="${modoDev}" th:href="@{/dev/correntistas}" class="text-sm font-medium text-teal-800 underline-offset-4 hover:underline">Trocar correntista</a>
+            <a th:href="@{/contas/nova}" class="rounded-lg bg-teal-700 px-4 py-2 font-semibold text-white hover:bg-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">Criar conta</a>
+        </div>
     </div>
 
     <div th:if="${#lists.isEmpty(contas)}" class="mt-8 rounded-xl bg-white p-8 shadow-sm">
         <h2 class="text-xl font-semibold text-slate-950">Nenhuma conta cadastrada</h2>
         <p class="mt-2 text-slate-700">Quando você criar uma conta corrente ou cartão, ela aparecerá aqui.</p>
+        <a th:href="@{/contas/nova}" class="mt-5 inline-block font-semibold text-teal-800 underline-offset-4 hover:underline">Criar minha primeira conta</a>
     </div>
 
     <div th:unless="${#lists.isEmpty(contas)}" class="mt-8 overflow-x-auto rounded-xl bg-white shadow-sm">
