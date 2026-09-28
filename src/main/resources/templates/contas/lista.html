@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Contas')}"></head>
+<body class="min-h-screen bg-slate-50 text-slate-900 antialiased">
+<header th:replace="~{fragments/layout :: cabecalho}"></header>
+<div th:replace="~{fragments/layout :: mensagem}"></div>
+<div th:replace="~{fragments/layout :: erro}"></div>
+
+<main class="mx-auto max-w-6xl px-5 py-12 sm:py-16">
+    <h1 class="text-3xl font-semibold tracking-tight text-slate-950">Contas</h1>
+    <p class="mt-2 text-slate-700">Selecione um correntista para ver suas contas cadastradas.</p>
+
+    <form th:action="@{/contas}" method="get" class="mt-8 flex flex-wrap items-end gap-3">
+        <div class="min-w-64 flex-1 sm:max-w-md">
+            <label for="correntistaId" class="block text-sm font-semibold text-slate-800">Correntista</label>
+            <select id="correntistaId" name="correntistaId" required class="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-3 text-slate-950">
+                <option value="">Selecione uma pessoa</option>
+                <option th:each="pessoa : ${correntistas}" th:value="${pessoa.id}" th:text="${pessoa.nome}"
+                        th:selected="${correntista != null and correntista.id == pessoa.id}">Correntista</option>
+            </select>
+        </div>
+        <button type="submit" class="rounded-lg bg-teal-700 px-5 py-3 font-semibold text-white hover:bg-teal-800">Ver contas</button>
+    </form>
+
+    <div th:if="${correntista != null}">
+        <h2 class="mt-10 text-xl font-semibold text-slate-950" th:text="|Contas de ${correntista.nome}|">Contas do correntista</h2>
+
+        <div th:if="${#lists.isEmpty(contas)}" class="mt-5 rounded-xl bg-white p-8 shadow-sm">
+            <p class="text-slate-700">Este correntista ainda não possui contas cadastradas.</p>
+        </div>
+
+        <div th:unless="${#lists.isEmpty(contas)}" class="mt-5 overflow-x-auto rounded-xl bg-white shadow-sm">
+            <table class="min-w-full text-left text-sm">
+                <caption class="sr-only">Contas correntes e cartões do correntista selecionado</caption>
+                <thead class="border-b border-slate-200 bg-slate-100 text-slate-700">
+                    <tr>
+                        <th scope="col" class="px-5 py-4 font-semibold">Conta</th>
+                        <th scope="col" class="px-5 py-4 font-semibold">Número</th>
+                        <th scope="col" class="px-5 py-4 font-semibold">Tipo</th>
+                        <th scope="col" class="px-5 py-4 font-semibold">Fechamento</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    <tr th:each="conta : ${contas}">
+                        <td class="px-5 py-4 font-medium text-slate-950" th:text="${conta.descricao}">Descrição</td>
+                        <td class="px-5 py-4 tabular-nums text-slate-700" th:text="${conta.numero}">0000-0</td>
+                        <td class="px-5 py-4 text-slate-700" th:text="${conta.tipo.name() == 'CORRENTE' ? 'Corrente' : 'Cartão'}">Tipo</td>
+                        <td class="px-5 py-4 text-slate-700" th:text="${conta.diaFechamento != null ? 'Dia ' + conta.diaFechamento : '—'}">—</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+</body>
+</html>
