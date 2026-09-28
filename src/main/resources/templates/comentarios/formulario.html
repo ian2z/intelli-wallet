@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${acao == 'criar'} ? 'Adicionar comentário' : 'Editar comentário')}"></head>
+<body class="min-h-screen bg-slate-50 text-slate-900 antialiased"
+      th:with="rota=${acao == 'criar'} ? @{/transacoes/{id}/comentario(id=${transacaoId})} : @{/transacoes/{id}/comentario/editar(id=${transacaoId})}">
+<header th:replace="~{fragments/layout :: cabecalho}"></header>
+<div th:replace="~{fragments/layout :: mensagem}"></div>
+<div th:replace="~{fragments/layout :: erro}"></div>
+
+<main class="mx-auto max-w-6xl px-5 py-12 sm:py-16">
+    <div class="max-w-xl">
+        <h1 class="text-3xl font-semibold tracking-tight text-slate-950"
+            th:text="${acao == 'criar'} ? 'Adicionar comentário' : 'Editar comentário'">Comentário</h1>
+
+        <form th:action="${rota}" th:object="${formulario}" method="post"
+              class="mt-8 space-y-5 rounded-xl bg-white p-6 shadow-sm sm:p-8" novalidate>
+            <input type="hidden" th:field="*{voltarPara}">
+            <div>
+                <label for="texto" class="block text-sm font-semibold text-slate-800">Comentário</label>
+                <textarea id="texto" th:field="*{texto}" required maxlength="500" rows="4"
+                          aria-describedby="texto-erro" th:attr="aria-invalid=${#fields.hasErrors('texto')}"
+                          class="mt-2 block w-full rounded-lg border border-slate-300 px-3 py-3 text-slate-950 outline-none focus:border-teal-700 focus:ring-2 focus:ring-teal-200"></textarea>
+                <p id="texto-erro" th:if="${#fields.hasErrors('texto')}" th:errors="*{texto}" class="mt-2 text-sm text-rose-700"></p>
+            </div>
+            <button type="submit" class="w-full rounded-lg bg-teal-700 px-5 py-3 font-semibold text-white hover:bg-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
+                    th:text="${acao == 'criar'} ? 'Adicionar comentário' : 'Salvar alterações'">Salvar</button>
+        </form>
+
+        <form th:if="${acao == 'editar'}" th:action="@{/transacoes/{id}/comentario/excluir(id=${transacaoId})}" method="post"
+              onsubmit="return confirm('Excluir comentário?')" class="mt-4">
+            <input type="hidden" name="voltarPara" th:value="${formulario.voltarPara}">
+            <button type="submit" class="inline-flex items-center gap-2 rounded-lg border border-rose-300 px-4 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-50">
+                <span th:replace="~{fragments/icones :: excluir}"></span>
+                Excluir comentário
+            </button>
+        </form>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+</body>
+</html>
