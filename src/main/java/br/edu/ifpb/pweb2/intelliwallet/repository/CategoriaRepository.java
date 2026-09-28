@@ -12,5 +12,8 @@ public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
 
     List<Categoria> findByNaturezaOrderByOrdemAsc(Natureza natureza);
 
+    // UC03: só categorias ativas aparecem no formulário de transação
+    List<Categoria> findByAtivoTrueOrderByOrdemAsc();
+
     Optional<Categoria> findByNome(String nome);
 }

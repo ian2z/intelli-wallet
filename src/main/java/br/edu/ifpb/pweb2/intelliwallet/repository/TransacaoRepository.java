@@ -17,9 +17,9 @@ public interface TransacaoRepository extends JpaRepository<Transacao, Long> {
 
     long countByContaId(Long contaId);
 
-    @EntityGraph(attributePaths = "categoria")
+    @EntityGraph(attributePaths = {"categoria", "comentario"})
     List<Transacao> findByContaIdOrderByDataDescIdDesc(Long contaId);
 
-    @EntityGraph(attributePaths = "categoria")
+    @EntityGraph(attributePaths = {"categoria", "comentario"})
     Optional<Transacao> findByIdAndContaId(Long id, Long contaId);
 }
