@@ -1,5 +1,6 @@
 package br.edu.ifpb.pweb2.intelliwallet.service;
 
+import java.util.List;
 import java.util.Locale;
 
 import org.springframework.dao.DataIntegrityViolationException;
@@ -21,6 +22,17 @@ public class CorrentistaService {
         this.correntistaRepository = correntistaRepository;
         this.senhaService = senhaService;
     }
+
+    @Transactional(readOnly = true)
+    public List<Correntista> listarCorrentistas() {
+        return correntistaRepository.findByPapelOrderByNomeAsc(Papel.CORRENTISTA);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Correntista> listarTodos() {
+        return listarCorrentistas();
+    }
+
 
     @Transactional
     public Correntista cadastrar(CadastroCorrentistaForm formulario) {
