@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="acoes(transacaoId, temComentario, voltarPara)" class="mt-3 flex items-center gap-3">
+    <a th:unless="${temComentario}" th:href="@{/transacoes/{id}/comentario/novo(id=${transacaoId}, voltarPara=${voltarPara})}"
+       class="inline-flex items-center gap-2 text-sm font-semibold text-teal-800 hover:underline">
+        <span th:replace="~{fragments/icones :: adicionar}"></span>
+        Adicionar comentário
+    </a>
+    <a th:if="${temComentario}" th:href="@{/transacoes/{id}/comentario/editar(id=${transacaoId}, voltarPara=${voltarPara})}"
+       class="inline-flex items-center gap-2 text-sm font-semibold text-teal-800 hover:underline">
+        <span th:replace="~{fragments/icones :: editar}"></span>
+        Editar comentário
+    </a>
+</div>
+</body>
+</html>
