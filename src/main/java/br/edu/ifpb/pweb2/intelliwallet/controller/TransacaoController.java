@@ -1,6 +1,7 @@
 package br.edu.ifpb.pweb2.intelliwallet.controller;
 
 import br.edu.ifpb.pweb2.intelliwallet.model.*;
+import br.edu.ifpb.pweb2.intelliwallet.service.TransacaoInvalidaException;
 import br.edu.ifpb.pweb2.intelliwallet.service.TransacaoService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;

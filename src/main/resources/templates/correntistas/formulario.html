@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${formulario.id == null ? 'Novo correntista' : 'Editar correntista'})}"></head>
+<body class="min-h-screen bg-slate-50 text-slate-900 antialiased">
+<header th:replace="~{fragments/layout :: cabecalho}"></header>
+
+<main class="mx-auto max-w-6xl px-5 py-12 sm:py-16">
+    <div class="max-w-xl">
+        <a th:href="@{/correntistas}" class="text-sm font-medium text-teal-800 underline-offset-4 hover:underline">Voltar para a listagem</a>
+        <h1 class="mt-6 text-3xl font-semibold tracking-tight text-slate-950"
+            th:text="${formulario.id == null ? 'Novo correntista' : 'Editar correntista'}">Novo correntista</h1>
+        <p class="mt-3 text-slate-700"
+           th:text="${formulario.id == null ? 'Preencha os dados para cadastrar um novo correntista.' : 'Atualize as informações do correntista.'}">
+           Preencha os dados para cadastrar um novo correntista.
+        </p>
+
+        <form th:action="@{${formulario.id == null ? '/correntistas/novo' : '/correntistas/' + formulario.id + '/editar'}}"
+              th:object="${formulario}" method="post" class="mt-8 space-y-5 rounded-xl bg-white p-6 shadow-sm sm:p-8" novalidate>
+            <input type="hidden" th:field="*{id}">
+            <input type="hidden" th:field="*{papel}">
+
+            <div>
+                <label for="nome" class="block text-sm font-semibold text-slate-800">Nome</label>
+                <input id="nome" type="text" th:field="*{nome}" autocomplete="name" required maxlength="120"
+                       aria-describedby="nome-erro" th:attr="aria-invalid=${#fields.hasErrors('nome')}"
+                       class="mt-2 block w-full rounded-lg border border-slate-300 px-3 py-3 text-slate-950 outline-none focus:border-teal-700 focus:ring-2 focus:ring-teal-200">
+                <p id="nome-erro" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}" class="mt-2 text-sm text-rose-700"></p>
+            </div>
+
+            <div>
+                <label for="login" class="block text-sm font-semibold text-slate-800">Login</label>
+                <input id="login" type="text" th:field="*{login}" autocomplete="username" required minlength="3" maxlength="60"
+                       aria-describedby="login-erro" th:attr="aria-invalid=${#fields.hasErrors('login')}"
+                       class="mt-2 block w-full rounded-lg border border-slate-300 px-3 py-3 text-slate-950 outline-none focus:border-teal-700 focus:ring-2 focus:ring-teal-200">
+                <p id="login-erro" th:if="${#fields.hasErrors('login')}" th:errors="*{login}" class="mt-2 text-sm text-rose-700"></p>
+            </div>
+
+            <div>
+                <label for="senha" class="block text-sm font-semibold text-slate-800">Senha</label>
+                <input id="senha" name="senha" type="password" autocomplete="new-password" maxlength="72"
+                       aria-describedby="senha-ajuda senha-erro" th:attr="aria-invalid=${#fields.hasErrors('senha')}"
+                       class="mt-2 block w-full rounded-lg border border-slate-300 px-3 py-3 text-slate-950 outline-none focus:border-teal-700 focus:ring-2 focus:ring-teal-200">
+                <p id="senha-ajuda" class="mt-2 text-sm text-slate-600"
+                   th:text="${formulario.id == null ? 'Use pelo menos 8 caracteres.' : 'Deixe em branco para manter a senha atual ou use pelo menos 8 caracteres para alterá-la.'}">
+                    Use pelo menos 8 caracteres.
+                </p>
+                <p id="senha-erro" th:if="${#fields.hasErrors('senha')}" th:errors="*{senha}" class="mt-2 text-sm text-rose-700"></p>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <input id="bloqueado" type="checkbox" th:field="*{bloqueado}" class="rounded border-slate-300 text-teal-700 focus:ring-teal-200">
+                <label for="bloqueado" class="text-sm font-medium text-slate-800">Bloquear correntista (impede o acesso ao sistema)</label>
+            </div>
+
+            <div class="flex flex-wrap gap-3 pt-2">
+                <button type="submit"
+                        class="flex-1 rounded-lg bg-teal-700 px-5 py-3 font-semibold text-white hover:bg-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
+                        th:text="${formulario.id == null ? 'Salvar correntista' : 'Atualizar correntista'}">Salvar</button>
+                <a th:href="@{/correntistas}"
+                   class="rounded-lg border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-800 hover:bg-slate-100">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+</body>
+</html>

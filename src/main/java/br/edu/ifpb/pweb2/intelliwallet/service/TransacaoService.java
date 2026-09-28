@@ -5,12 +5,14 @@ import br.edu.ifpb.pweb2.intelliwallet.model.Comentario;
 import br.edu.ifpb.pweb2.intelliwallet.model.Conta;
 import br.edu.ifpb.pweb2.intelliwallet.model.Natureza;
 import br.edu.ifpb.pweb2.intelliwallet.model.Transacao;
+import br.edu.ifpb.pweb2.intelliwallet.model.TransacaoForm;
 import br.edu.ifpb.pweb2.intelliwallet.repository.CategoriaRepository;
 import br.edu.ifpb.pweb2.intelliwallet.repository.ContaRepository;
 import br.edu.ifpb.pweb2.intelliwallet.repository.TransacaoRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.LinkedHashMap;
