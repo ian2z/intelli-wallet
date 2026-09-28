@@ -40,6 +40,9 @@ public class Transacao implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "conta_id")
     private Conta conta;
+    
+    @OneToOne(mappedBy = "transacao", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Comentario comentario;
 
     public Transacao(LocalDate data, String descricao, BigDecimal valor, Movimento movimento,
                      Categoria categoria, Conta conta) {
@@ -49,5 +52,13 @@ public class Transacao implements Serializable {
         this.movimento = movimento;
         this.categoria = categoria;
         this.conta = conta;
+    }
+
+    public boolean isDebito() {
+        return movimento == Movimento.DEBITO;
+    }
+
+    public boolean isComComentario() {
+        return comentario != null;
     }
 }
