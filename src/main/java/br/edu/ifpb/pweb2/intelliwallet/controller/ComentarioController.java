@@ -122,6 +122,7 @@ public class ComentarioController {
         return "redirect:" + destinoSeguro(voltarPara);
     }
 
+    // TODO(RNF08/09): sem checagem de dono ate a Etapa II — validar transacao.getConta().getCorrentista() contra o usuario autenticado.
     private Transacao buscarTransacaoOu404(Long transacaoId) {
         return transacaoRepository.findById(transacaoId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));

@@ -3,6 +3,7 @@ package br.edu.ifpb.pweb2.intelliwallet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -155,5 +156,19 @@ class ComentarioIntegrationTests {
 
         mockMvc.perform(get("/transacoes/{id}/comentario/editar", transacaoId))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void mostraFormularioDeEdicaoComTextoExistente() throws Exception {
+        Long transacaoId = transacaoSeedId();
+        mockMvc.perform(post("/transacoes/{id}/comentario", transacaoId)
+                .param("texto", "Texto original")
+                .param("voltarPara", "/contas"));
+
+        mockMvc.perform(get("/transacoes/{id}/comentario/editar", transacaoId))
+                .andExpect(status().isOk())
+                .andExpect(view().name("comentarios/formulario"))
+                .andExpect(model().attribute("acao", "editar"))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Texto original")));
     }
 }
