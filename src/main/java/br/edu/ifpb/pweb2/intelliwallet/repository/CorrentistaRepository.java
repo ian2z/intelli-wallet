@@ -2,6 +2,7 @@ package br.edu.ifpb.pweb2.intelliwallet.repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -18,8 +19,6 @@ public interface CorrentistaRepository extends JpaRepository<Correntista, Long> 
 
     boolean existsByLoginIgnoreCase(String login);
 
-    List<Correntista> findByPapel(Papel papel);
-
-    List<Correntista> findByBloqueado(boolean bloqueado);
+    List<Correntista> findByPapelOrderByNomeAsc(Papel papel);
 }
 

@@ -54,7 +54,11 @@ Aplicação web de carteira inteligente e controle financeiro, desenvolvida para
 4. **Acessar a aplicação:**
    - Abra o navegador em: [http://localhost:8080](http://localhost:8080)
 
-No perfil `dev` (padrão local), a aplicação cria 22 categorias, o administrador `admin` e o correntista `teste`, com duas contas e transações de exemplo. As senhas iniciais são `admin_dev_123` e `teste_dev_123`; substitua-as pelas variáveis `INTELLI_SEED_ADMIN_PASSWORD` e `INTELLI_SEED_DEMO_PASSWORD` se necessário. Ative outro perfil fora do desenvolvimento para não carregar usuários e dados de demonstração.
+O arquivo `src/main/resources/data.sql` insere as 22 categorias predefinidas. No perfil `dev` (padrão local), `data-dev.sql` adiciona o administrador `admin` e o correntista `teste`, com duas contas e transações de exemplo. As senhas de exemplo são `admin_dev_123` e `teste_dev_123`; os valores gravados são hashes BCrypt. Use outro perfil e outro banco fora do desenvolvimento para não carregar os dados de demonstração. Os scripts podem ser executados novamente sem duplicar registros.
+
+As telas usam Tailwind CSS compilado em `src/main/resources/static/css/app.css`. O CSS gerado acompanha o repositório. Ao alterar classes nos templates, execute `npm install` e `npm run build:css` para atualizá-lo.
+
+Na Etapa I, antes da autenticação, a página `/contas` permite selecionar um correntista para demonstrar o UC02. A tabela consulta somente as contas da pessoa escolhida. A criação de contas correntes e cartões pelo próprio correntista não faz parte dos casos de uso pontuados desta etapa e ainda depende de confirmação com o professor.
 
 ---
 
