@@ -17,7 +17,7 @@ public class Transacao implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @Column(nullable = false)
@@ -29,8 +29,9 @@ public class Transacao implements Serializable {
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal valor;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
-    private String movimento;
+    private Movimento movimento;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "categoria_id")
@@ -40,10 +41,7 @@ public class Transacao implements Serializable {
     @JoinColumn(name = "conta_id")
     private Conta conta;
 
-    @OneToOne(mappedBy = "transacao", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Comentario comentario;
-
-    public Transacao(LocalDate data, String descricao, BigDecimal valor, String movimento,
+    public Transacao(LocalDate data, String descricao, BigDecimal valor, Movimento movimento,
                      Categoria categoria, Conta conta) {
         this.data = data;
         this.descricao = descricao;

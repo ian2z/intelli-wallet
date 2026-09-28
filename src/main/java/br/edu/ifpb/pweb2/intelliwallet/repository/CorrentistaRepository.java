@@ -14,5 +14,5 @@ public interface CorrentistaRepository extends JpaRepository<Correntista, Long> 
 
     boolean existsByLoginIgnoreCase(String login);
 
-    List<Correntista> findByPapelAndBloqueadoFalseOrderByNomeAsc(Papel papel);
+    List<Correntista> findByPapelOrderByNomeAsc(Papel papel);
 }

@@ -11,9 +11,5 @@ public interface ContaRepository extends JpaRepository<Conta, Long> {
 
     List<Conta> findByCorrentistaIdOrderByIdAsc(Long correntistaId);
 
-    boolean existsByCorrentistaIdAndNumeroIgnoreCase(Long correntistaId, String numero);
-
     Optional<Conta> findByCorrentistaIdAndNumero(Long correntistaId, String numero);
-
-    Optional<Conta> findByIdAndCorrentistaId(Long id, Long correntistaId);
 }

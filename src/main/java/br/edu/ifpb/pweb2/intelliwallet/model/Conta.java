@@ -14,8 +14,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
@@ -53,16 +51,4 @@ public class Conta {
 
     @OneToMany(mappedBy = "conta", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Transacao> transacoes = new ArrayList<>();
-
-    @PrePersist
-    @PreUpdate
-    private void validarDiaFechamento() {
-        if (tipo == TipoConta.CARTAO
-                && (diaFechamento == null || diaFechamento < 1 || diaFechamento > 31)) {
-            throw new IllegalArgumentException("O dia de fechamento deve estar entre 1 e 31");
-        }
-        if (tipo == TipoConta.CORRENTE) {
-            diaFechamento = null;
-        }
-    }
 }

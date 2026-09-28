@@ -58,9 +58,7 @@ O arquivo `src/main/resources/data.sql` insere as 22 categorias predefinidas. No
 
 As telas usam Tailwind CSS compilado em `src/main/resources/static/css/app.css`. O CSS gerado acompanha o repositório. Ao alterar classes nos templates, execute `npm install` e `npm run build:css` para atualizá-lo.
 
-Na Etapa I, sem autenticação integrada, o perfil `dev` oferece `/dev/correntistas` para escolher um correntista de teste. A listagem `/contas` mostra somente as contas da pessoa selecionada nessa sessão. O seletor não existe fora do perfil `dev`.
-
-Após escolher um correntista, use `/contas/nova` para criar uma conta corrente ou um cartão. Cartões exigem o dia de fechamento entre 1 e 31; contas correntes não usam esse campo.
+Na Etapa I, antes da autenticação, a página `/contas` permite selecionar um correntista para demonstrar o UC02. A tabela consulta somente as contas da pessoa escolhida. A criação de contas correntes e cartões pelo próprio correntista não faz parte dos casos de uso pontuados desta etapa e ainda depende de confirmação com o professor.
 
 ---
 
