@@ -131,6 +131,19 @@ class ComentarioIntegrationTests {
     }
 
     @Test
+    void rejeitaVoltarParaProtocolRelativoAoExcluir() throws Exception {
+        Long transacaoId = transacaoSeedId();
+        mockMvc.perform(post("/transacoes/{id}/comentario", transacaoId)
+                .param("texto", "Comentário a ser removido")
+                .param("voltarPara", "/contas"));
+
+        mockMvc.perform(post("/transacoes/{id}/comentario/excluir", transacaoId)
+                        .param("voltarPara", "//evil.com"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/"));
+    }
+
+    @Test
     void retorna404ParaTransacaoInexistente() throws Exception {
         mockMvc.perform(get("/transacoes/{id}/comentario/novo", 999999L))
                 .andExpect(status().isNotFound());

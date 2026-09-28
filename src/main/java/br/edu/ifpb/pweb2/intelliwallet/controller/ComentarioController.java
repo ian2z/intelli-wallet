@@ -128,7 +128,8 @@ public class ComentarioController {
     }
 
     private String destinoSeguro(String voltarPara) {
-        if (voltarPara != null && voltarPara.startsWith("/")) {
+        if (voltarPara != null && voltarPara.startsWith("/")
+                && !voltarPara.startsWith("//") && !voltarPara.startsWith("/\\")) {
             return voltarPara;
         }
         return "/";
