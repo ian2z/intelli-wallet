@@ -13,7 +13,7 @@
             <p class="mt-2 text-slate-700">Listagem de correntistas cadastrados no IntelliWallet.</p>
         </div>
         <div>
-            <a th:href="@{/cadastro}" class="rounded-lg bg-teal-700 px-5 py-3 font-semibold text-white hover:bg-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">Novo correntista</a>
+            <a th:href="@{/correntistas/novo}" class="rounded-lg bg-teal-700 px-5 py-3 font-semibold text-white hover:bg-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">Novo correntista</a>
         </div>
     </div>
 
@@ -42,16 +42,18 @@
                     </td>
                     <td class="px-5 py-4">
                         <div class="flex flex-wrap items-center gap-3">
-                            <button type="button" disabled
-                                    class="rounded-lg border border-slate-300 bg-white px-3 py-2 font-medium text-slate-600"
-                                    title="Funcionalidade em desenvolvimento">Editar</button>
+                            <a th:href="@{/correntistas/{id}/editar(id=${correntista.id})}"
+                               class="rounded-lg border border-slate-300 bg-white px-3 py-2 font-medium text-slate-700 hover:bg-slate-100">Editar</a>
                             <button type="button" disabled
                                     class="rounded-lg border border-slate-300 bg-white px-3 py-2 font-medium text-slate-600"
                                     title="Funcionalidade em desenvolvimento"
                                     th:text="${correntista.bloqueado ? 'Desbloquear' : 'Bloquear'}">Bloquear</button>
-                            <button type="button" disabled
-                                    class="rounded-lg border border-slate-300 bg-white px-3 py-2 font-medium text-slate-600"
-                                    title="Funcionalidade em desenvolvimento">Excluir</button>
+                            <form th:action="@{/correntistas/{id}/excluir(id=${correntista.id})}" method="post"
+                                  th:onsubmit="|return confirm('Deseja realmente excluir o correntista \'${correntista.nome}\'? Todas as suas contas e transações serão removidas em cascata.');|"
+                                  class="inline">
+                                <button type="submit"
+                                        class="rounded-lg border border-slate-300 bg-white px-3 py-2 font-medium text-rose-700 hover:bg-rose-50">Excluir</button>
+                            </form>
                         </div>
                     </td>
                 </tr>
