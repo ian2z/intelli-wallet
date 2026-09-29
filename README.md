@@ -1,10 +1,10 @@
-# IntelliWallet 🪙💼
+# IntelliWallet
 
 Aplicação web de carteira inteligente e controle financeiro, desenvolvida para a disciplina de **Programação Web 2 (PWEB2)** no **Instituto Federal da Paraíba (IFPB)**.
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## Tecnologias Utilizadas
 
 - **Linguagem:** Java 17
 - **Framework:** Spring Boot 4.x
@@ -19,7 +19,7 @@ Aplicação web de carteira inteligente e controle financeiro, desenvolvida para
 
 ---
 
-## 🚀 Como Executar o Projeto
+## Como Executar o Projeto
 
 ### Pré-requisitos
 - **Java JDK 17** instalado
@@ -62,7 +62,7 @@ Na Etapa I, antes da autenticação, a página `/contas` permite selecionar um c
 
 ---
 
-## 🌿 Convenção de Branches
+## Convenção de Branches
 
 Adotamos um modelo baseado em **Gitflow Simplificado**, separando o código estável, o código em desenvolvimento e as branches de trabalho individuais.
 
@@ -96,7 +96,7 @@ Toda nova implementação ou correção deve ser criada em uma branch separada e
 
 ---
 
-## 📝 Convenção de Commits
+## Convenção de Commits
 
 Seguimos a especificação do **[Conventional Commits](https://www.conventionalcommits.org/)**. Os commits devem ser informativos, concisos e padronizados.
 
@@ -134,7 +134,7 @@ test(usuario): criar testes de integracao para login
 
 ---
 
-## 🔀 Regras de Pull Request (PR)
+## Regras de Pull Request (PR)
 
 Para manter a qualidade e rastreabilidade do código, nenhuma alteração deve ser enviada diretamente para `main` ou `develop` sem Pull Request.
 
