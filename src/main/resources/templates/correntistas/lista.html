@@ -49,7 +49,8 @@
                                     title="Funcionalidade em desenvolvimento"
                                     th:text="${correntista.bloqueado ? 'Desbloquear' : 'Bloquear'}">Bloquear</button>
                             <form th:action="@{/correntistas/{id}/excluir(id=${correntista.id})}" method="post"
-                                  th:onsubmit="|return confirm('Deseja realmente excluir o correntista \'${correntista.nome}\'? Todas as suas contas e transações serão removidas em cascata.');|"
+                                  th:data-nome="${correntista.nome}"
+                                  onsubmit="return confirm('Deseja realmente excluir o correntista ' + this.getAttribute('data-nome') + '? Todas as suas contas e transações serão removidas em cascata.');"
                                   class="inline">
                                 <button type="submit"
                                         class="rounded-lg border border-slate-300 bg-white px-3 py-2 font-medium text-rose-700 hover:bg-rose-50">Excluir</button>

@@ -38,14 +38,25 @@
                         <th scope="col" class="px-5 py-4 font-semibold">Número</th>
                         <th scope="col" class="px-5 py-4 font-semibold">Tipo</th>
                         <th scope="col" class="px-5 py-4 font-semibold">Fechamento</th>
+                        <th scope="col" class="px-5 py-4 font-semibold">Ações</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
                     <tr th:each="conta : ${contas}">
-                        <td class="px-5 py-4 font-medium text-slate-950" th:text="${conta.descricao}">Descrição</td>
+                        <td class="px-5 py-4 font-medium text-slate-950">
+                            <a th:href="@{/contas/{id}(id=${conta.id})}" class="font-semibold text-teal-800 hover:underline" th:text="${conta.descricao}">Descrição</a>
+                        </td>
                         <td class="px-5 py-4 tabular-nums text-slate-700" th:text="${conta.numero}">0000-0</td>
                         <td class="px-5 py-4 text-slate-700" th:text="${conta.tipo.name() == 'CORRENTE' ? 'Corrente' : 'Cartão'}">Tipo</td>
                         <td class="px-5 py-4 text-slate-700" th:text="${conta.diaFechamento != null ? 'Dia ' + conta.diaFechamento : '—'}">—</td>
+                        <td class="px-5 py-4">
+                            <div class="flex flex-wrap items-center gap-3">
+                                <a th:href="@{/contas/{id}(id=${conta.id})}"
+                                   class="rounded-lg border border-slate-300 bg-white px-3 py-2 font-medium text-slate-700 hover:bg-slate-100">Ver transações</a>
+                                <a th:href="@{/contas/{id}/transacoes/nova(id=${conta.id})}"
+                                   class="rounded-lg bg-teal-700 px-3 py-2 font-medium text-white hover:bg-teal-800">+ Nova transação</a>
+                            </div>
+                        </td>
                     </tr>
                 </tbody>
             </table>
