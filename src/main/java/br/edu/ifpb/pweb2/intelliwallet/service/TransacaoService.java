@@ -1,5 +1,6 @@
 package br.edu.ifpb.pweb2.intelliwallet.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -15,7 +16,9 @@ import org.springframework.web.server.ResponseStatusException;
 import br.edu.ifpb.pweb2.intelliwallet.model.Categoria;
 import br.edu.ifpb.pweb2.intelliwallet.model.Comentario;
 import br.edu.ifpb.pweb2.intelliwallet.model.Conta;
+import br.edu.ifpb.pweb2.intelliwallet.model.Movimento;
 import br.edu.ifpb.pweb2.intelliwallet.model.Natureza;
+import br.edu.ifpb.pweb2.intelliwallet.model.ResumoSaldo;
 import br.edu.ifpb.pweb2.intelliwallet.model.Transacao;
 import br.edu.ifpb.pweb2.intelliwallet.model.TransacaoForm;
 import br.edu.ifpb.pweb2.intelliwallet.repository.CategoriaRepository;
@@ -45,6 +48,46 @@ public class TransacaoService {
     @Transactional(readOnly = true)
     public List<Transacao> listarPorConta(Long contaId) {
         return transacaoRepository.findByContaIdOrderByDataDescIdDesc(contaId);
+    }
+
+    @Transactional(readOnly = true)
+    public ResumoSaldo calcularResumo(Long contaId) {
+        List<Transacao> transacoes = listarPorConta(contaId);
+        return calcularResumo(transacoes);
+    }
+
+    public ResumoSaldo calcularResumo(List<Transacao> transacoes) {
+        if (transacoes == null || transacoes.isEmpty()) {
+            return ResumoSaldo.vazio();
+        }
+
+        BigDecimal creditos = BigDecimal.ZERO;
+        BigDecimal debitos = BigDecimal.ZERO;
+
+        for (Transacao transacao : transacoes) {
+            BigDecimal valor = transacao.getValor() != null ? transacao.getValor() : BigDecimal.ZERO;
+            if (transacao.getMovimento() == Movimento.CREDITO) {
+                creditos = creditos.add(valor);
+            } else if (transacao.getMovimento() == Movimento.DEBITO) {
+                debitos = debitos.add(valor);
+            }
+        }
+
+        BigDecimal saldo = creditos.subtract(debitos);
+        return new ResumoSaldo(saldo, creditos, debitos);
+    }
+
+    @Transactional(readOnly = true)
+    public Map<Long, BigDecimal> calcularSaldosPorContas(List<Conta> contas) {
+        Map<Long, BigDecimal> saldos = new LinkedHashMap<>();
+        if (contas == null || contas.isEmpty()) {
+            return saldos;
+        }
+        for (Conta conta : contas) {
+            ResumoSaldo resumo = calcularResumo(conta.getId());
+            saldos.put(conta.getId(), resumo.saldo());
+        }
+        return saldos;
     }
 
     // UC03 (e UC05, quando o comentário é informado já no cadastro)

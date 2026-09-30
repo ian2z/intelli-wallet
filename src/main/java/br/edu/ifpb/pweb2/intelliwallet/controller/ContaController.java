@@ -1,11 +1,13 @@
 package br.edu.ifpb.pweb2.intelliwallet.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
@@ -13,10 +15,10 @@ import org.springframework.web.server.ResponseStatusException;
 import br.edu.ifpb.pweb2.intelliwallet.model.Conta;
 import br.edu.ifpb.pweb2.intelliwallet.model.Correntista;
 import br.edu.ifpb.pweb2.intelliwallet.model.Papel;
+import br.edu.ifpb.pweb2.intelliwallet.model.Transacao;
 import br.edu.ifpb.pweb2.intelliwallet.repository.ContaRepository;
 import br.edu.ifpb.pweb2.intelliwallet.repository.CorrentistaRepository;
 import br.edu.ifpb.pweb2.intelliwallet.service.TransacaoService;
-import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 @RequestMapping("/contas")
@@ -38,13 +40,16 @@ public class ContaController {
     public String listar(@RequestParam(required = false) Long correntistaId, Model model) {
         model.addAttribute("correntistas", correntistaRepository.findByPapelOrderByNomeAsc(Papel.CORRENTISTA));
         model.addAttribute("contas", List.of());
+        model.addAttribute("saldos", Map.of());
 
         if (correntistaId != null) {
             Correntista correntista = correntistaRepository.findById(correntistaId)
                     .filter(pessoa -> pessoa.getPapel() == Papel.CORRENTISTA)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+            List<Conta> contas = contaRepository.findByCorrentistaIdOrderByIdAsc(correntistaId);
             model.addAttribute("correntista", correntista);
-            model.addAttribute("contas", contaRepository.findByCorrentistaIdOrderByIdAsc(correntistaId));
+            model.addAttribute("contas", contas);
+            model.addAttribute("saldos", transacaoService.calcularSaldosPorContas(contas));
         }
 
         return "contas/lista";
@@ -53,8 +58,10 @@ public class ContaController {
     @GetMapping({"/{id}", "/{id}/transacoes"})
     public String transacoes(@PathVariable Long id, Model model) {
         Conta conta = transacaoService.buscarConta(id);
+        List<Transacao> transacoes = transacaoService.listarPorConta(id);
         model.addAttribute("conta", conta);
-        model.addAttribute("transacoes", transacaoService.listarPorConta(id));
+        model.addAttribute("transacoes", transacoes);
+        model.addAttribute("resumo", transacaoService.calcularResumo(transacoes));
         return "contas/transacoes";
     }
 }

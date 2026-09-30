@@ -23,6 +23,29 @@
         </div>
     </div>
 
+    <div class="mt-8 flex flex-wrap gap-4">
+        <div class="min-w-64 flex-1 rounded-xl bg-white p-6 shadow-sm">
+            <p class="text-xs font-semibold text-slate-600">Saldo atual</p>
+            <p class="mt-2 text-3xl font-bold tabular-nums"
+               th:classappend="${resumo.saldo.signum() < 0} ? 'text-rose-700' : 'text-slate-950'"
+               th:text="|R$ ${#numbers.formatDecimal(resumo.saldo, 1, 'POINT', 2, 'COMMA')}|">R$ 0,00</p>
+            <span th:if="${resumo.saldo.signum() >= 0}" class="mt-1 block text-xs font-medium text-teal-800">Saldo positivo</span>
+            <span th:if="${resumo.saldo.signum() < 0}" class="mt-1 block text-xs font-medium text-rose-700">Saldo devedor / negativo</span>
+        </div>
+        <div class="min-w-64 flex-1 rounded-xl bg-white p-6 shadow-sm">
+            <p class="text-xs font-semibold text-slate-600">Total de entradas</p>
+            <p class="mt-2 text-3xl font-bold tabular-nums text-teal-800"
+               th:text="|+ R$ ${#numbers.formatDecimal(resumo.totalCreditos, 1, 'POINT', 2, 'COMMA')}|">+ R$ 0,00</p>
+            <span class="mt-1 block text-xs text-slate-600">Créditos recebidos</span>
+        </div>
+        <div class="min-w-64 flex-1 rounded-xl bg-white p-6 shadow-sm">
+            <p class="text-xs font-semibold text-slate-600">Total de saídas</p>
+            <p class="mt-2 text-3xl font-bold tabular-nums text-rose-700"
+               th:text="|- R$ ${#numbers.formatDecimal(resumo.totalDebitos, 1, 'POINT', 2, 'COMMA')}|">- R$ 0,00</p>
+            <span class="mt-1 block text-xs text-slate-600">Débitos realizados</span>
+        </div>
+    </div>
+
     <div th:if="${#lists.isEmpty(transacoes)}" class="mt-8 rounded-xl bg-white p-8 shadow-sm">
         <p class="text-slate-700">Esta conta ainda não possui transações cadastradas.</p>
     </div>

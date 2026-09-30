@@ -6,7 +6,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.edu.ifpb.pweb2.intelliwallet.model.Conta;
 import br.edu.ifpb.pweb2.intelliwallet.model.Correntista;
+import br.edu.ifpb.pweb2.intelliwallet.model.ResumoSaldo;
 import br.edu.ifpb.pweb2.intelliwallet.model.TipoConta;
 import br.edu.ifpb.pweb2.intelliwallet.repository.ContaRepository;
 import br.edu.ifpb.pweb2.intelliwallet.repository.CorrentistaRepository;
@@ -89,5 +92,34 @@ class ContasIntegrationTests {
 
         mockMvc.perform(get("/contas").param("correntistaId", adminId.toString()))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void incluiSaldosDasContasAoListarPorCorrentista() throws Exception {
+        Long id = correntistaRepository.findByLoginIgnoreCase("teste").orElseThrow().getId();
+
+        mockMvc.perform(get("/contas").param("correntistaId", id.toString()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("saldos"))
+                .andExpect(result -> {
+                    @SuppressWarnings("unchecked")
+                    Map<Long, BigDecimal> saldos = (Map<Long, BigDecimal>) result.getModelAndView().getModel().get("saldos");
+                    assertThat(saldos).isNotEmpty();
+                });
+    }
+
+    @Test
+    void exibeResumoComSaldoNaVisualizacaoDeTransacoesDaConta() throws Exception {
+        Conta conta = contaRepository.findAll().stream().findFirst().orElseThrow();
+
+        mockMvc.perform(get("/contas/{id}", conta.getId()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("contas/transacoes"))
+                .andExpect(model().attributeExists("resumo"))
+                .andExpect(result -> {
+                    ResumoSaldo resumo = (ResumoSaldo) result.getModelAndView().getModel().get("resumo");
+                    assertThat(resumo).isNotNull();
+                    assertThat(resumo.saldo()).isNotNull();
+                });
     }
 }
