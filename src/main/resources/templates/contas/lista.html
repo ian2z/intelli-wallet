@@ -38,6 +38,7 @@
                         <th scope="col" class="px-5 py-4 font-semibold">Número</th>
                         <th scope="col" class="px-5 py-4 font-semibold">Tipo</th>
                         <th scope="col" class="px-5 py-4 font-semibold">Fechamento</th>
+                        <th scope="col" class="px-5 py-4 font-semibold">Saldo</th>
                         <th scope="col" class="px-5 py-4 font-semibold">Ações</th>
                     </tr>
                 </thead>
@@ -49,6 +50,9 @@
                         <td class="px-5 py-4 tabular-nums text-slate-700" th:text="${conta.numero}">0000-0</td>
                         <td class="px-5 py-4 text-slate-700" th:text="${conta.tipo.name() == 'CORRENTE' ? 'Corrente' : 'Cartão'}">Tipo</td>
                         <td class="px-5 py-4 text-slate-700" th:text="${conta.diaFechamento != null ? 'Dia ' + conta.diaFechamento : '—'}">—</td>
+                        <td class="px-5 py-4 tabular-nums font-semibold"
+                            th:classappend="${saldos[conta.id] != null and saldos[conta.id].signum() < 0} ? 'text-rose-700' : 'text-slate-950'"
+                            th:text="${saldos[conta.id] != null} ? |R$ ${#numbers.formatDecimal(saldos[conta.id], 1, 'POINT', 2, 'COMMA')}| : 'R$ 0,00'">R$ 0,00</td>
                         <td class="px-5 py-4">
                             <div class="flex flex-wrap items-center gap-3">
                                 <a th:href="@{/contas/{id}(id=${conta.id})}"
