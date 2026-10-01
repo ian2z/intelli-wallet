@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Escolher correntista')}"></head>
+<body class="min-h-screen bg-slate-50 text-slate-900 antialiased">
+<header th:replace="~{fragments/layout :: cabecalho}"></header>
+<div th:replace="~{fragments/layout :: mensagem}"></div>
+
+<main class="mx-auto max-w-6xl px-5 py-12 sm:py-16">
+    <h1 class="text-3xl font-semibold tracking-tight text-slate-950">Entrar como correntista</h1>
+    <p class="mt-3 text-slate-700">Escolha um correntista para acessar suas contas nesta demonstração da Etapa I.</p>
+
+    <div th:if="${#lists.isEmpty(correntistas)}" class="mt-8 rounded-xl bg-white p-8 shadow-sm">
+        <p class="text-slate-700">Nenhum correntista cadastrado.</p>
+    </div>
+    <ul th:unless="${#lists.isEmpty(correntistas)}" class="mt-8 divide-y divide-slate-200 rounded-xl bg-white shadow-sm">
+        <li th:each="pessoa : ${correntistas}" class="flex flex-wrap items-center justify-between gap-4 px-5 py-4">
+            <div>
+                <p th:text="${pessoa.nome}" class="font-semibold text-slate-950">Nome</p>
+                <p th:text="${pessoa.login}" class="mt-1 text-sm text-slate-600">Login</p>
+            </div>
+            <a th:href="@{/correntista/{id}(id=${pessoa.id})}" th:attr="aria-label=|Entrar como ${pessoa.nome}|"
+               class="rounded-lg bg-teal-700 px-4 py-2 font-semibold text-white hover:bg-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">Entrar</a>
+        </li>
+    </ul>
+    <a th:href="@{/cadastro}" class="mt-6 inline-block text-sm font-medium text-teal-800 underline-offset-4 hover:underline">Ainda não tem cadastro? Cadastre-se</a>
+</main>
+
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+</body>
+</html>

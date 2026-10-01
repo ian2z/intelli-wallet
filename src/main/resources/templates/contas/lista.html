@@ -7,26 +7,17 @@
 <div th:replace="~{fragments/layout :: erro}"></div>
 
 <main class="mx-auto max-w-6xl px-5 py-12 sm:py-16">
-    <h1 class="text-3xl font-semibold tracking-tight text-slate-950">Contas</h1>
-    <p class="mt-2 text-slate-700">Selecione um correntista para ver suas contas cadastradas.</p>
-
-    <form th:action="@{/contas}" method="get" class="mt-8 flex flex-wrap items-end gap-3">
-        <div class="min-w-64 flex-1 sm:max-w-md">
-            <label for="correntistaId" class="block text-sm font-semibold text-slate-800">Correntista</label>
-            <select id="correntistaId" name="correntistaId" required class="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-3 text-slate-950">
-                <option value="">Selecione uma pessoa</option>
-                <option th:each="pessoa : ${correntistas}" th:value="${pessoa.id}" th:text="${pessoa.nome}"
-                        th:selected="${correntista != null and correntista.id == pessoa.id}">Correntista</option>
-            </select>
+    <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-semibold tracking-tight text-slate-950">Minhas contas</h1>
+            <p class="mt-2 text-slate-700" th:text="|Contas de ${correntista.nome}|">Contas do correntista</p>
         </div>
-        <button type="submit" class="rounded-lg bg-teal-700 px-5 py-3 font-semibold text-white hover:bg-teal-800">Ver contas</button>
-    </form>
+        <a th:href="@{/contas/nova}" class="rounded-lg bg-teal-700 px-5 py-3 font-semibold text-white hover:bg-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">Nova conta</a>
+    </div>
 
     <div th:if="${correntista != null}">
-        <h2 class="mt-10 text-xl font-semibold text-slate-950" th:text="|Contas de ${correntista.nome}|">Contas do correntista</h2>
-
         <div th:if="${#lists.isEmpty(contas)}" class="mt-5 rounded-xl bg-white p-8 shadow-sm">
-            <p class="text-slate-700">Este correntista ainda não possui contas cadastradas.</p>
+            <p class="text-slate-700">Você ainda não possui contas. Use “Nova conta” para cadastrar uma conta corrente ou um cartão.</p>
         </div>
 
         <div th:unless="${#lists.isEmpty(contas)}" class="mt-5 overflow-x-auto rounded-xl bg-white shadow-sm">

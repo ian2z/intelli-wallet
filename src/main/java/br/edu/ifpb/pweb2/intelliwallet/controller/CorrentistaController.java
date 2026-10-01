@@ -13,15 +13,24 @@ import br.edu.ifpb.pweb2.intelliwallet.model.Correntista;
 import br.edu.ifpb.pweb2.intelliwallet.model.CorrentistaForm;
 import br.edu.ifpb.pweb2.intelliwallet.service.CorrentistaService;
 import br.edu.ifpb.pweb2.intelliwallet.service.LoginJaCadastradoException;
+import br.edu.ifpb.pweb2.intelliwallet.service.VisaoService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 @Controller
 public class CorrentistaController {
 
     private final CorrentistaService correntistaService;
+    private final VisaoService visaoService;
 
-    public CorrentistaController(CorrentistaService correntistaService) {
+    public CorrentistaController(CorrentistaService correntistaService, VisaoService visaoService) {
         this.correntistaService = correntistaService;
+        this.visaoService = visaoService;
+    }
+
+    @ModelAttribute
+    public void verificarVisao(HttpSession sessao) {
+        visaoService.exigirAdministrador(sessao);
     }
 
     @GetMapping({"/correntistas", "/admin/correntistas"})

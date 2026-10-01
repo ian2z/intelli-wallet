@@ -8,12 +8,17 @@
 </head>
 <body>
 <header th:fragment="cabecalho" class="border-b border-slate-200 bg-white">
-    <nav aria-label="Navegação principal" class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-4">
+    <nav aria-label="Navegação principal" class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-4">
         <a th:href="@{/}" class="text-xl font-bold tracking-tight text-slate-950">IntelliWallet</a>
-        <div class="flex items-center gap-4 text-sm font-medium">
-            <a th:href="@{/contas}" class="text-slate-700 underline-offset-4 hover:text-teal-800 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700">Minhas contas</a>
-            <a th:href="@{/correntistas}" class="text-slate-700 underline-offset-4 hover:text-teal-800 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700">Correntistas</a>
-            <a th:href="@{/cadastro}" class="rounded-lg bg-teal-700 px-4 py-2 text-white hover:bg-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">Criar cadastro</a>
+        <div class="flex flex-wrap items-center gap-4 text-sm font-medium">
+            <span th:if="${administrador}" class="text-slate-700">Visão de administrador</span>
+            <span th:if="${correntistaAtual != null}" th:text="${correntistaAtual.nome}" class="text-slate-700">Correntista</span>
+            <a th:if="${correntistaAtual != null}" th:href="@{/contas}" class="text-slate-700 underline-offset-4 hover:text-teal-800 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700">Minhas contas</a>
+            <a th:if="${administrador}" th:href="@{/correntistas}" class="text-slate-700 underline-offset-4 hover:text-teal-800 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700">Correntistas</a>
+            <a th:unless="${administrador or correntistaAtual != null}" th:href="@{/cadastro}" class="rounded-lg bg-teal-700 px-4 py-2 text-white hover:bg-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">Criar cadastro</a>
+            <form th:if="${administrador or correntistaAtual != null}" th:action="@{/sair}" method="post">
+                <button type="submit" class="rounded-lg border border-slate-300 px-4 py-2 text-slate-700 hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">Sair da visão</button>
+            </form>
         </div>
     </nav>
 </header>

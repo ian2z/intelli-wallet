@@ -58,7 +58,15 @@ O arquivo `src/main/resources/data.sql` insere as 22 categorias predefinidas. No
 
 As telas usam Tailwind CSS compilado em `src/main/resources/static/css/app.css`. O CSS gerado acompanha o repositório. Ao alterar classes nos templates, execute `npm install` e `npm run build:css` para atualizá-lo.
 
-Na Etapa I, antes da autenticação, a página `/contas` permite selecionar um correntista para demonstrar o UC02. A tabela consulta somente as contas da pessoa escolhida. A criação de contas correntes e cartões pelo próprio correntista não faz parte dos casos de uso pontuados desta etapa e ainda depende de confirmação com o professor.
+Na Etapa I, o acesso é simulado pela sessão do navegador, sem login e senha:
+
+- `/correntista`: permite escolher um correntista cadastrado.
+- `/correntista/{id}`: seleciona esse correntista na sessão e redireciona para `/contas`.
+- `/contas`: mostra somente as contas do correntista selecionado. Em “Nova conta”, ele pode cadastrar uma conta corrente ou um cartão; o dia de fechamento (1 a 31) é obrigatório para cartão.
+- `/admin`: seleciona a visão de administrador e redireciona para a gestão de correntistas.
+- “Sair da visão”: encerra a sessão e retorna ao início.
+
+As visões são exclusivas: entrar como administrador remove o correntista selecionado e vice-versa. As operações de contas, transações e comentários usam o dono da sessão; a gestão de correntistas exige a visão administrativa. Qualquer pessoa pode escolher essas visões nesta demonstração: elas não substituem a autenticação e autorização da Etapa II. O UC01 continua sendo o cadastro público do correntista em `/cadastro`; o cadastro de conta corrente/cartão foi adicionado para a demonstração da Etapa I.
 
 ---
 
