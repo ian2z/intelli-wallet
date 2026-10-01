@@ -40,9 +40,9 @@ class ContasIntegrationTests {
 
     @Test
     void mostraEscolhaDeCorrentistaAntesDaListagem() throws Exception {
-        mockMvc.perform(get("/contas"))
+        mockMvc.perform(get("/correntista"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("contas/lista"))
+                .andExpect(view().name("correntistas/selecao"))
                 .andExpect(model().attributeExists("correntistas"));
     }
 
@@ -50,7 +50,7 @@ class ContasIntegrationTests {
     void listaApenasContasDoCorrentistaSelecionado() throws Exception {
         Long id = correntistaRepository.findByLoginIgnoreCase("teste").orElseThrow().getId();
 
-        mockMvc.perform(get("/contas").param("correntistaId", id.toString()))
+        mockMvc.perform(get("/contas").sessionAttr("correntistaId", id))
                 .andExpect(status().isOk())
                 .andExpect(result -> {
                     @SuppressWarnings("unchecked")
@@ -77,7 +77,7 @@ class ContasIntegrationTests {
 
         Long outroId = outro.getId();
         Long contaId = contaDeOutro.getId();
-        mockMvc.perform(get("/contas").param("correntistaId", outroId.toString()))
+        mockMvc.perform(get("/contas").sessionAttr("correntistaId", outroId))
                 .andExpect(status().isOk())
                 .andExpect(result -> {
                     @SuppressWarnings("unchecked")
@@ -90,7 +90,7 @@ class ContasIntegrationTests {
     void administradorNaoEntraNaListagemDeCorrentistas() throws Exception {
         Long adminId = correntistaRepository.findByLoginIgnoreCase("admin").orElseThrow().getId();
 
-        mockMvc.perform(get("/contas").param("correntistaId", adminId.toString()))
+        mockMvc.perform(get("/correntista/{id}", adminId))
                 .andExpect(status().isNotFound());
     }
 
@@ -98,7 +98,7 @@ class ContasIntegrationTests {
     void incluiSaldosDasContasAoListarPorCorrentista() throws Exception {
         Long id = correntistaRepository.findByLoginIgnoreCase("teste").orElseThrow().getId();
 
-        mockMvc.perform(get("/contas").param("correntistaId", id.toString()))
+        mockMvc.perform(get("/contas").sessionAttr("correntistaId", id))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("saldos"))
                 .andExpect(result -> {
@@ -112,7 +112,8 @@ class ContasIntegrationTests {
     void exibeResumoComSaldoNaVisualizacaoDeTransacoesDaConta() throws Exception {
         Conta conta = contaRepository.findAll().stream().findFirst().orElseThrow();
 
-        mockMvc.perform(get("/contas/{id}", conta.getId()))
+        mockMvc.perform(get("/contas/{id}", conta.getId())
+                        .sessionAttr("correntistaId", conta.getCorrentista().getId()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("contas/transacoes"))
                 .andExpect(model().attributeExists("resumo"))

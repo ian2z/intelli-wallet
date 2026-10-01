@@ -19,6 +19,8 @@ import br.edu.ifpb.pweb2.intelliwallet.model.Transacao;
 import br.edu.ifpb.pweb2.intelliwallet.repository.TransacaoRepository;
 import br.edu.ifpb.pweb2.intelliwallet.service.ComentarioJaExisteException;
 import br.edu.ifpb.pweb2.intelliwallet.service.ComentarioService;
+import br.edu.ifpb.pweb2.intelliwallet.service.VisaoService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 @Controller
@@ -27,10 +29,18 @@ public class ComentarioController {
 
     private final ComentarioService comentarioService;
     private final TransacaoRepository transacaoRepository;
+    private final VisaoService visaoService;
 
-    public ComentarioController(ComentarioService comentarioService, TransacaoRepository transacaoRepository) {
+    public ComentarioController(ComentarioService comentarioService, TransacaoRepository transacaoRepository,
+                                VisaoService visaoService) {
         this.comentarioService = comentarioService;
         this.transacaoRepository = transacaoRepository;
+        this.visaoService = visaoService;
+    }
+
+    @ModelAttribute
+    public void verificarVisao(@PathVariable Long transacaoId, HttpSession sessao) {
+        visaoService.verificarTransacao(transacaoId, sessao);
     }
 
     @GetMapping("/novo")
@@ -122,7 +132,6 @@ public class ComentarioController {
         return "redirect:" + destinoSeguro(voltarPara);
     }
 
-    // TODO(RNF08/09): sem checagem de dono ate a Etapa II — validar transacao.getConta().getCorrentista() contra o usuario autenticado.
     private Transacao buscarTransacaoOu404(Long transacaoId) {
         return transacaoRepository.findById(transacaoId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));

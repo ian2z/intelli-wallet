@@ -9,7 +9,7 @@
 <main class="mx-auto max-w-6xl px-5 py-12 sm:py-16">
     <div class="flex flex-wrap items-center justify-between gap-4">
         <div>
-            <a th:href="@{/contas(correntistaId=${conta.correntista.id})}" class="text-sm font-medium text-teal-800 underline-offset-4 hover:underline">Voltar às contas</a>
+            <a th:href="@{/contas}" class="text-sm font-medium text-teal-800 underline-offset-4 hover:underline">Voltar às contas</a>
             <h1 class="mt-4 text-3xl font-semibold tracking-tight text-slate-950" th:text="${conta.descricao}">Transações da conta</h1>
             <p class="mt-2 text-slate-700">
                 <span th:text="|Número: ${conta.numero}|">0000-0</span> · 

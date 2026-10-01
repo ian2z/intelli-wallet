@@ -14,6 +14,8 @@ import br.edu.ifpb.pweb2.intelliwallet.model.Movimento;
 import br.edu.ifpb.pweb2.intelliwallet.model.TransacaoForm;
 import br.edu.ifpb.pweb2.intelliwallet.service.TransacaoInvalidaException;
 import br.edu.ifpb.pweb2.intelliwallet.service.TransacaoService;
+import br.edu.ifpb.pweb2.intelliwallet.service.VisaoService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 @Controller
@@ -21,9 +23,16 @@ import jakarta.validation.Valid;
 public class TransacaoController {
 
     private final TransacaoService transacaoService;
+    private final VisaoService visaoService;
 
-    public TransacaoController(TransacaoService transacaoService) {
+    public TransacaoController(TransacaoService transacaoService, VisaoService visaoService) {
         this.transacaoService = transacaoService;
+        this.visaoService = visaoService;
+    }
+
+    @ModelAttribute
+    public void verificarVisao(@PathVariable Long contaId, HttpSession sessao) {
+        visaoService.verificarConta(contaId, sessao);
     }
 
     // UC03, passos 2 e 3: correntista clica no "+" e o sistema mostra o formulário
