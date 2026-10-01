@@ -39,4 +39,8 @@ public class Categoria {
     @Min(1)
     @Column(nullable = false)
     private int ordem;
+
+    public Movimento getMovimentoPadrao() {
+        return natureza != null ? natureza.getMovimentoPadrao() : Movimento.DEBITO;
+    }
 }
