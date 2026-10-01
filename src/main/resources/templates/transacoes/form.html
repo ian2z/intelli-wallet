@@ -39,18 +39,6 @@
             </div>
 
             <div>
-                <label for="movimento" class="block text-sm font-semibold text-slate-800">Tipo de movimento</label>
-                <select id="movimento" th:field="*{movimento}" required
-                        aria-describedby="movimento-erro" th:attr="aria-invalid=${#fields.hasErrors('movimento')}"
-                        class="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-3 text-slate-950 outline-none focus:border-teal-700 focus:ring-2 focus:ring-teal-200">
-                    <option value="">Selecione o movimento</option>
-                    <option th:each="m : ${movimentos}" th:value="${m}"
-                            th:text="${m.name() == 'CREDITO' ? 'Crédito (+)' : 'Débito (-)'}">Crédito</option>
-                </select>
-                <p id="movimento-erro" th:if="${#fields.hasErrors('movimento')}" th:errors="*{movimento}" class="mt-2 text-sm text-rose-700"></p>
-            </div>
-
-            <div>
                 <label for="categoriaId" class="block text-sm font-semibold text-slate-800">Categoria</label>
                 <select id="categoriaId" th:field="*{categoriaId}" required
                         aria-describedby="categoriaId-erro" th:attr="aria-invalid=${#fields.hasErrors('categoriaId')}"
@@ -58,10 +46,26 @@
                     <option value="">Selecione uma categoria</option>
                     <optgroup th:each="entry : ${categoriasPorNatureza}" th:label="${entry.key}">
                         <option th:each="cat : ${entry.value}" th:value="${cat.id}" th:text="${cat.nome}"
+                                th:data-movimento="${cat.natureza.name() == 'ENTRADA' ? 'CREDITO' : 'DEBITO'}"
                                 th:selected="${formulario.categoriaId == cat.id}">Categoria</option>
                     </optgroup>
                 </select>
                 <p id="categoriaId-erro" th:if="${#fields.hasErrors('categoriaId')}" th:errors="*{categoriaId}" class="mt-2 text-sm text-rose-700"></p>
+            </div>
+
+            <div>
+                <label for="movimentoSelect" class="block text-sm font-semibold text-slate-800">Tipo de movimento</label>
+                <input type="hidden" id="movimento" th:field="*{movimento}">
+                <select id="movimentoSelect" disabled
+                        aria-describedby="movimento-erro"
+                        class="mt-2 block w-full rounded-lg border border-slate-300 bg-slate-100 px-3 py-3 font-semibold text-slate-700 outline-none"
+                        style="cursor: not-allowed;">
+                    <option value="">Selecione uma categoria para definir</option>
+                    <option th:each="m : ${movimentos}" th:value="${m}"
+                            th:text="${m.name() == 'CREDITO' ? 'Crédito (+)' : 'Débito (-)'}"
+                            th:selected="${formulario.movimento == m}">Crédito</option>
+                </select>
+                <p id="movimento-erro" th:if="${#fields.hasErrors('movimento')}" th:errors="*{movimento}" class="mt-2 text-sm text-rose-700"></p>
             </div>
 
             <div th:if="${transacaoId == null}">
@@ -84,5 +88,43 @@
 </main>
 
 <footer th:replace="~{fragments/layout :: rodape}"></footer>
+
+<script>
+    (function () {
+        const selectCategoria = document.getElementById('categoriaId');
+        const inputMovimento = document.getElementById('movimento');
+        const selectMovimento = document.getElementById('movimentoSelect');
+
+        function atualizarMovimento() {
+            if (!selectCategoria || !selectMovimento) return;
+            const opcaoSelecionada = selectCategoria.options[selectCategoria.selectedIndex];
+            if (!opcaoSelecionada || !opcaoSelecionada.value) {
+                selectMovimento.value = '';
+                if (inputMovimento) inputMovimento.value = '';
+                selectMovimento.className = 'mt-2 block w-full rounded-lg border border-slate-300 bg-slate-100 px-3 py-3 font-semibold text-slate-700 outline-none';
+                return;
+            }
+
+            const movimentoDetectado = opcaoSelecionada.getAttribute('data-movimento');
+            if (movimentoDetectado) {
+                selectMovimento.value = movimentoDetectado;
+                if (inputMovimento) inputMovimento.value = movimentoDetectado;
+
+                if (movimentoDetectado === 'CREDITO') {
+                    selectMovimento.className = 'mt-2 block w-full rounded-lg border border-slate-300 bg-teal-50 px-3 py-3 font-semibold text-teal-900 outline-none';
+                } else {
+                    selectMovimento.className = 'mt-2 block w-full rounded-lg border border-slate-300 bg-rose-50 px-3 py-3 font-semibold text-rose-700 outline-none';
+                }
+            }
+        }
+
+        if (selectCategoria) {
+            selectCategoria.addEventListener('change', atualizarMovimento);
+            if (selectCategoria.value) {
+                atualizarMovimento();
+            }
+        }
+    })();
+</script>
 </body>
 </html>

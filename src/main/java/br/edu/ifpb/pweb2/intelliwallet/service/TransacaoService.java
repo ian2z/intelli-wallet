@@ -97,8 +97,11 @@ public class TransacaoService {
         verificarNaoBloqueado(conta);
         Categoria categoria = buscarCategoriaPermitida(formulario.getCategoriaId(), null);
 
+        Movimento movimento = categoria.getMovimentoPadrao();
+        formulario.setMovimento(movimento);
+
         Transacao transacao = new Transacao(formulario.getData(), formulario.getDescricao().trim(),
-                formulario.getValor(), formulario.getMovimento(), categoria, conta);
+                formulario.getValor(), movimento, categoria, conta);
 
         if (StringUtils.hasText(formulario.getComentario())) {
             transacao.setComentario(new Comentario(formulario.getComentario().trim(), transacao));
@@ -135,12 +138,15 @@ public class TransacaoService {
         Categoria categoria = buscarCategoriaPermitida(formulario.getCategoriaId(),
                 transacao.getCategoria().getId());
 
+        Movimento movimento = categoria.getMovimentoPadrao();
+        formulario.setMovimento(movimento);
+
         // Altera a entidade carregada do banco, campo a campo. O comentário não é tocado
         // aqui (ele tem formulário próprio, UC05/UC06), então nunca é apagado sem querer.
         transacao.setData(formulario.getData());
         transacao.setDescricao(formulario.getDescricao().trim());
         transacao.setValor(formulario.getValor());
-        transacao.setMovimento(formulario.getMovimento());
+        transacao.setMovimento(movimento);
         transacao.setCategoria(categoria);
 
         return transacao;

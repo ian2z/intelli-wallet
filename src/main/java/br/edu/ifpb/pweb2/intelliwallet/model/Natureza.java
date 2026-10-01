@@ -14,4 +14,8 @@ public enum Natureza {
     public String getDescricao() {
         return descricao;
     }
+
+    public Movimento getMovimentoPadrao() {
+        return this == ENTRADA ? Movimento.CREDITO : Movimento.DEBITO;
+    }
 }
