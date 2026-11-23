@@ -1,6 +1,7 @@
 package br.edu.ifpb.pweb2.intelliwallet;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
@@ -40,7 +41,7 @@ class CadastroCorrentistaIntegrationTests {
 
     @Test
     void cadastroValidoRedirecionaEArmazenaHash() throws Exception {
-        mockMvc.perform(post("/cadastro")
+        mockMvc.perform(post("/cadastro").with(csrf())
                         .param("nome", "Maria Silva")
                         .param("login", "MARIA")
                         .param("senha", "senhaSegura123"))
@@ -55,7 +56,7 @@ class CadastroCorrentistaIntegrationTests {
 
     @Test
     void loginDuplicadoMostraErroNoCampo() throws Exception {
-        mockMvc.perform(post("/cadastro")
+        mockMvc.perform(post("/cadastro").with(csrf())
                         .param("nome", "Outro usuário")
                         .param("login", "TESTE")
                         .param("senha", "senhaSegura123"))

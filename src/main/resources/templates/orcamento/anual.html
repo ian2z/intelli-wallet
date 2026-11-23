@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Orçamento anual')}"></head>
+<body class="min-h-screen bg-slate-50 text-slate-900 antialiased">
+<header th:replace="~{fragments/layout :: cabecalho}"></header>
+<div th:replace="~{fragments/layout :: mensagem}"></div>
+<div th:replace="~{fragments/layout :: erro}"></div>
+
+<main class="mx-auto max-w-6xl px-5 py-12 sm:py-16">
+    <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-semibold tracking-tight text-slate-950" th:text="|Orçamento anual · ${anoSelecionado}|">Orçamento anual</h1>
+            <p class="mt-2 text-slate-700">Consolidado mensal por categoria, agrupado por Entradas, Saídas e Investimentos.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+            <a th:href="@{/grafico(ano=${anoSelecionado}, contaId=${contaIdSelecionada})}"
+               class="rounded-lg bg-teal-700 px-5 py-3 font-semibold text-white hover:bg-teal-800">Ver gráfico anual</a>
+        </div>
+    </div>
+
+    <!-- Filtros de Ano e Conta -->
+    <form th:action="@{/orcamento}" method="get" class="mt-8 flex flex-wrap gap-4 rounded-xl bg-white p-6 shadow-sm" style="align-items: flex-end;">
+        <div>
+            <label for="ano" class="block text-xs font-semibold text-slate-700">Ano</label>
+            <select id="ano" name="ano"
+                    class="mt-2 block rounded-lg border border-slate-300 bg-white px-4 text-sm text-slate-950 outline-none focus:border-teal-700 focus:ring-2 focus:ring-teal-200"
+                    style="height: 40px; min-width: 100px;">
+                <option th:each="a : ${anosDisponiveis}" th:value="${a}" th:text="${a}" th:selected="${a == anoSelecionado}">2026</option>
+            </select>
+        </div>
+        <div>
+            <label for="contaId" class="block text-xs font-semibold text-slate-700">Conta</label>
+            <select id="contaId" name="contaId"
+                    class="mt-2 block rounded-lg border border-slate-300 bg-white px-4 text-sm text-slate-950 outline-none focus:border-teal-700 focus:ring-2 focus:ring-teal-200"
+                    style="height: 40px; min-width: 220px;">
+                <option value="">Todas as contas</option>
+                <option th:each="c : ${contas}" th:value="${c.id}" th:text="|${c.descricao} (${c.numero})|"
+                        th:selected="${contaIdSelecionada != null and contaIdSelecionada == c.id}">Conta</option>
+            </select>
+        </div>
+        <button type="submit"
+                class="rounded-lg bg-teal-700 px-5 text-sm font-semibold text-white hover:bg-teal-800"
+                style="height: 40px;">Atualizar</button>
+    </form>
+
+    <!-- Totais Anuais -->
+    <div class="mt-6 flex flex-wrap gap-4">
+        <div class="min-w-64 flex-1 rounded-xl bg-white p-6 shadow-sm">
+            <p class="text-xs font-semibold text-slate-600">Total de Entradas</p>
+            <p class="mt-2 text-xl font-bold tabular-nums text-teal-800"
+               th:text="|R$ ${#numbers.formatDecimal(orcamento.totalEntradas, 1, 'POINT', 2, 'COMMA')}|">R$ 0,00</p>
+        </div>
+        <div class="min-w-64 flex-1 rounded-xl bg-white p-6 shadow-sm">
+            <p class="text-xs font-semibold text-slate-600">Total de Saídas</p>
+            <p class="mt-2 text-xl font-bold tabular-nums text-rose-700"
+               th:text="|R$ ${#numbers.formatDecimal(orcamento.totalSaidas, 1, 'POINT', 2, 'COMMA')}|">R$ 0,00</p>
+        </div>
+        <div class="min-w-64 flex-1 rounded-xl bg-white p-6 shadow-sm">
+            <p class="text-xs font-semibold text-slate-600">Total de Investimentos</p>
+            <p class="mt-2 text-xl font-bold tabular-nums text-slate-900"
+               th:text="|R$ ${#numbers.formatDecimal(orcamento.totalInvestimentos, 1, 'POINT', 2, 'COMMA')}|">R$ 0,00</p>
+        </div>
+        <div class="min-w-64 flex-1 rounded-xl bg-white p-6 shadow-sm">
+            <p class="text-xs font-semibold text-slate-600">Saldo líquido no ano</p>
+            <p class="mt-2 text-xl font-bold tabular-nums"
+               th:classappend="${orcamento.saldoAnual.signum() < 0} ? 'text-rose-700' : 'text-teal-900'"
+               th:text="|R$ ${#numbers.formatDecimal(orcamento.saldoAnual, 1, 'POINT', 2, 'COMMA')}|">R$ 0,00</p>
+        </div>
+    </div>
+
+    <!-- Planilhas por Natureza (ENTRADA -> SAIDA -> INVESTIMENTO) -->
+    <section th:each="grupo : ${orcamento.grupos}" class="mt-8">
+        <div class="flex items-center justify-between">
+            <h2 class="text-xl font-semibold text-slate-950" th:text="${grupo.natureza.descricao}">Entradas</h2>
+            <span class="text-sm font-semibold tabular-nums"
+                  th:classappend="${grupo.natureza.name() == 'ENTRADA'} ? 'text-teal-800' : (${grupo.natureza.name() == 'SAIDA'} ? 'text-rose-700' : 'text-slate-800')"
+                  th:text="|Total anual: R$ ${#numbers.formatDecimal(grupo.totalAnual, 1, 'POINT', 2, 'COMMA')}|">Total</span>
+        </div>
+
+        <div class="mt-3 overflow-x-auto rounded-xl bg-white shadow-sm">
+            <table class="min-w-full text-left text-xs">
+                <thead class="border-b border-slate-200 bg-slate-100 text-slate-700">
+                    <tr>
+                        <th scope="col" class="px-4 py-3 font-semibold" style="min-width: 11rem;">Categoria</th>
+                        <th scope="col" class="px-3 py-3 font-semibold" th:each="m : ${meses}" th:text="${#strings.substring(m, 0, 3)}">Jan</th>
+                        <th scope="col" class="px-4 py-3 font-semibold">Total</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    <tr th:each="linha : ${grupo.linhas}">
+                        <td class="px-4 py-3 font-medium text-slate-950">
+                            <span th:text="${linha.categoriaNome}">Categoria</span>
+                            <span th:unless="${linha.ativa}" class="text-xs text-slate-600"> (inativa)</span>
+                        </td>
+                        <td class="px-3 py-3 tabular-nums"
+                            th:each="valorMes : ${linha.meses}"
+                            th:classappend="${valorMes.signum() > 0} ? 'font-semibold text-slate-950' : 'text-slate-600'"
+                            th:text="${#numbers.formatDecimal(valorMes, 1, 'POINT', 2, 'COMMA')}">0,00</td>
+                        <td class="px-4 py-3 font-bold tabular-nums text-slate-950"
+                            th:text="${#numbers.formatDecimal(linha.totalAnual, 1, 'POINT', 2, 'COMMA')}">0,00</td>
+                    </tr>
+                    <tr class="bg-slate-100 font-bold text-slate-950">
+                        <td class="px-4 py-3" th:text="|Total ${grupo.natureza.descricao}|">Total</td>
+                        <td class="px-3 py-3 tabular-nums"
+                            th:each="totMes : ${grupo.totaisMensais}"
+                            th:text="${#numbers.formatDecimal(totMes, 1, 'POINT', 2, 'COMMA')}">0,00</td>
+                        <td class="px-4 py-3 tabular-nums"
+                            th:text="${#numbers.formatDecimal(grupo.totalAnual, 1, 'POINT', 2, 'COMMA')}">0,00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+</body>
+</html>

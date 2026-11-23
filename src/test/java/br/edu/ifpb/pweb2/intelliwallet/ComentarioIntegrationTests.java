@@ -1,6 +1,8 @@
 package br.edu.ifpb.pweb2.intelliwallet;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -42,10 +44,6 @@ class ComentarioIntegrationTests {
     @Autowired
     private ComentarioRepository comentarioRepository;
 
-    private Long correntistaId() {
-        return correntistaRepository.findByLoginIgnoreCase("teste").orElseThrow().getId();
-    }
-
     private Long transacaoSeedId() {
         Long correntistaId = correntistaRepository.findByLoginIgnoreCase("teste").orElseThrow().getId();
         Conta conta = contaRepository.findByCorrentistaIdAndNumero(correntistaId, "1001-0").orElseThrow();
@@ -56,7 +54,7 @@ class ComentarioIntegrationTests {
     void mostraFormularioDeCriacaoQuandoNaoHaComentario() throws Exception {
         Long transacaoId = transacaoSeedId();
 
-        mockMvc.perform(get("/transacoes/{id}/comentario/novo", transacaoId).sessionAttr("correntistaId", correntistaId()))
+        mockMvc.perform(get("/transacoes/{id}/comentario/novo", transacaoId).with(user("teste").roles("CORRENTISTA")))
                 .andExpect(status().isOk())
                 .andExpect(view().name("comentarios/formulario"))
                 .andExpect(model().attribute("acao", "criar"));
@@ -66,7 +64,8 @@ class ComentarioIntegrationTests {
     void criaComentarioComTextoValido() throws Exception {
         Long transacaoId = transacaoSeedId();
 
-        mockMvc.perform(post("/transacoes/{id}/comentario", transacaoId).sessionAttr("correntistaId", correntistaId())
+        mockMvc.perform(post("/transacoes/{id}/comentario", transacaoId)
+                        .with(user("teste").roles("CORRENTISTA")).with(csrf())
                         .param("texto", "Compra parcelada em 3x")
                         .param("voltarPara", "/contas"))
                 .andExpect(status().is3xxRedirection())
@@ -81,7 +80,8 @@ class ComentarioIntegrationTests {
     void naoCriaComentarioComTextoEmBranco() throws Exception {
         Long transacaoId = transacaoSeedId();
 
-        mockMvc.perform(post("/transacoes/{id}/comentario", transacaoId).sessionAttr("correntistaId", correntistaId())
+        mockMvc.perform(post("/transacoes/{id}/comentario", transacaoId)
+                        .with(user("teste").roles("CORRENTISTA")).with(csrf())
                         .param("texto", "")
                         .param("voltarPara", "/contas"))
                 .andExpect(status().isOk())
@@ -94,11 +94,12 @@ class ComentarioIntegrationTests {
     @Test
     void redirecionaParaEdicaoQuandoJaExisteComentario() throws Exception {
         Long transacaoId = transacaoSeedId();
-        mockMvc.perform(post("/transacoes/{id}/comentario", transacaoId).sessionAttr("correntistaId", correntistaId())
+        mockMvc.perform(post("/transacoes/{id}/comentario", transacaoId)
+                .with(user("teste").roles("CORRENTISTA")).with(csrf())
                 .param("texto", "Primeiro comentário")
                 .param("voltarPara", "/contas"));
 
-        mockMvc.perform(get("/transacoes/{id}/comentario/novo", transacaoId).sessionAttr("correntistaId", correntistaId()))
+        mockMvc.perform(get("/transacoes/{id}/comentario/novo", transacaoId).with(user("teste").roles("CORRENTISTA")))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/transacoes/" + transacaoId + "/comentario/editar"));
     }
@@ -106,11 +107,13 @@ class ComentarioIntegrationTests {
     @Test
     void atualizaTextoDoComentarioExistente() throws Exception {
         Long transacaoId = transacaoSeedId();
-        mockMvc.perform(post("/transacoes/{id}/comentario", transacaoId).sessionAttr("correntistaId", correntistaId())
+        mockMvc.perform(post("/transacoes/{id}/comentario", transacaoId)
+                .with(user("teste").roles("CORRENTISTA")).with(csrf())
                 .param("texto", "Texto original")
                 .param("voltarPara", "/contas"));
 
-        mockMvc.perform(post("/transacoes/{id}/comentario/editar", transacaoId).sessionAttr("correntistaId", correntistaId())
+        mockMvc.perform(post("/transacoes/{id}/comentario/editar", transacaoId)
+                        .with(user("teste").roles("CORRENTISTA")).with(csrf())
                         .param("texto", "Texto corrigido")
                         .param("voltarPara", "/contas"))
                 .andExpect(status().is3xxRedirection())
@@ -123,11 +126,13 @@ class ComentarioIntegrationTests {
     @Test
     void excluiComentarioExistente() throws Exception {
         Long transacaoId = transacaoSeedId();
-        mockMvc.perform(post("/transacoes/{id}/comentario", transacaoId).sessionAttr("correntistaId", correntistaId())
+        mockMvc.perform(post("/transacoes/{id}/comentario", transacaoId)
+                .with(user("teste").roles("CORRENTISTA")).with(csrf())
                 .param("texto", "Comentário a ser removido")
                 .param("voltarPara", "/contas"));
 
-        mockMvc.perform(post("/transacoes/{id}/comentario/excluir", transacaoId).sessionAttr("correntistaId", correntistaId())
+        mockMvc.perform(post("/transacoes/{id}/comentario/excluir", transacaoId)
+                        .with(user("teste").roles("CORRENTISTA")).with(csrf())
                         .param("voltarPara", "/contas"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/contas"));
@@ -138,11 +143,13 @@ class ComentarioIntegrationTests {
     @Test
     void rejeitaVoltarParaProtocolRelativoAoExcluir() throws Exception {
         Long transacaoId = transacaoSeedId();
-        mockMvc.perform(post("/transacoes/{id}/comentario", transacaoId).sessionAttr("correntistaId", correntistaId())
+        mockMvc.perform(post("/transacoes/{id}/comentario", transacaoId)
+                .with(user("teste").roles("CORRENTISTA")).with(csrf())
                 .param("texto", "Comentário a ser removido")
                 .param("voltarPara", "/contas"));
 
-        mockMvc.perform(post("/transacoes/{id}/comentario/excluir", transacaoId).sessionAttr("correntistaId", correntistaId())
+        mockMvc.perform(post("/transacoes/{id}/comentario/excluir", transacaoId)
+                        .with(user("teste").roles("CORRENTISTA")).with(csrf())
                         .param("voltarPara", "//evil.com"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/"));
@@ -150,7 +157,7 @@ class ComentarioIntegrationTests {
 
     @Test
     void retorna404ParaTransacaoInexistente() throws Exception {
-        mockMvc.perform(get("/transacoes/{id}/comentario/novo", 999999L).sessionAttr("correntistaId", correntistaId()))
+        mockMvc.perform(get("/transacoes/{id}/comentario/novo", 999999L).with(user("teste").roles("CORRENTISTA")))
                 .andExpect(status().isNotFound());
     }
 
@@ -158,18 +165,19 @@ class ComentarioIntegrationTests {
     void retorna404AoEditarTransacaoSemComentario() throws Exception {
         Long transacaoId = transacaoSeedId();
 
-        mockMvc.perform(get("/transacoes/{id}/comentario/editar", transacaoId).sessionAttr("correntistaId", correntistaId()))
+        mockMvc.perform(get("/transacoes/{id}/comentario/editar", transacaoId).with(user("teste").roles("CORRENTISTA")))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void mostraFormularioDeEdicaoComTextoExistente() throws Exception {
         Long transacaoId = transacaoSeedId();
-        mockMvc.perform(post("/transacoes/{id}/comentario", transacaoId).sessionAttr("correntistaId", correntistaId())
+        mockMvc.perform(post("/transacoes/{id}/comentario", transacaoId)
+                .with(user("teste").roles("CORRENTISTA")).with(csrf())
                 .param("texto", "Texto original")
                 .param("voltarPara", "/contas"));
 
-        mockMvc.perform(get("/transacoes/{id}/comentario/editar", transacaoId).sessionAttr("correntistaId", correntistaId()))
+        mockMvc.perform(get("/transacoes/{id}/comentario/editar", transacaoId).with(user("teste").roles("CORRENTISTA")))
                 .andExpect(status().isOk())
                 .andExpect(view().name("comentarios/formulario"))
                 .andExpect(model().attribute("acao", "editar"))

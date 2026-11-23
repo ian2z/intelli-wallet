@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<body>
+<nav th:fragment="controles(pagina, baseUrl)" th:if="${pagina != null and pagina.totalPages > 1}"
+     aria-label="Paginação"
+     class="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-xl bg-white px-5 py-4 text-sm shadow-sm">
+    <p class="text-slate-700">
+        Página <strong th:text="${pagina.number + 1}">1</strong> de <strong th:text="${pagina.totalPages}">1</strong>
+        <span class="text-slate-600" th:text="| · ${pagina.totalElements} registro(s)|"> · 0 registro(s)</span>
+    </p>
+    <div class="flex flex-wrap items-center gap-3">
+        <a th:if="${pagina.hasPrevious()}"
+           th:href="@{${baseUrl}(pagina=${pagina.number - 1})}"
+           class="rounded-lg border border-slate-300 bg-white px-4 py-2 font-medium text-slate-700 hover:bg-slate-100">Anterior</a>
+        <span th:unless="${pagina.hasPrevious()}"
+              class="rounded-lg border border-slate-200 bg-slate-100 px-4 py-2 font-medium text-slate-600">Anterior</span>
+
+        <a th:if="${pagina.hasNext()}"
+           th:href="@{${baseUrl}(pagina=${pagina.number + 1})}"
+           class="rounded-lg border border-slate-300 bg-white px-4 py-2 font-medium text-slate-700 hover:bg-slate-100">Próxima</a>
+        <span th:unless="${pagina.hasNext()}"
+              class="rounded-lg border border-slate-200 bg-slate-100 px-4 py-2 font-medium text-slate-600">Próxima</span>
+    </div>
+</nav>
+
+<nav th:fragment="controlesExtrato(pagina, contaId, dataInicio, dataFim)" th:if="${pagina != null and pagina.totalPages > 1}"
+     aria-label="Paginação do extrato"
+     class="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-xl bg-white px-5 py-4 text-sm shadow-sm">
+    <p class="text-slate-700">
+        Página <strong th:text="${pagina.number + 1}">1</strong> de <strong th:text="${pagina.totalPages}">1</strong>
+        <span class="text-slate-600" th:text="| · ${pagina.totalElements} transação(ões) no período|"> · 0</span>
+    </p>
+    <div class="flex flex-wrap items-center gap-3">
+        <a th:if="${pagina.hasPrevious()}"
+           th:href="@{/contas/{id}(id=${contaId}, dataInicio=${dataInicio}, dataFim=${dataFim}, pagina=${pagina.number - 1})}"
+           class="rounded-lg border border-slate-300 bg-white px-4 py-2 font-medium text-slate-700 hover:bg-slate-100">Anterior</a>
+        <span th:unless="${pagina.hasPrevious()}"
+              class="rounded-lg border border-slate-200 bg-slate-100 px-4 py-2 font-medium text-slate-600">Anterior</span>
+
+        <a th:if="${pagina.hasNext()}"
+           th:href="@{/contas/{id}(id=${contaId}, dataInicio=${dataInicio}, dataFim=${dataFim}, pagina=${pagina.number + 1})}"
+           class="rounded-lg border border-slate-300 bg-white px-4 py-2 font-medium text-slate-700 hover:bg-slate-100">Próxima</a>
+        <span th:unless="${pagina.hasNext()}"
+              class="rounded-lg border border-slate-200 bg-slate-100 px-4 py-2 font-medium text-slate-600">Próxima</span>
+    </div>
+</nav>
+</body>
+</html>

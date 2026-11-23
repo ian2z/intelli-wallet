@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Acesso negado')}"></head>
+<body class="min-h-screen bg-slate-50 text-slate-900 antialiased">
+<header th:replace="~{fragments/layout :: cabecalho}"></header>
+
+<main class="mx-auto max-w-6xl px-5 py-16 sm:py-24">
+    <div class="max-w-xl rounded-xl bg-white p-8 shadow-sm">
+        <p class="text-sm font-semibold text-rose-700">Erro 403</p>
+        <h1 class="mt-2 text-3xl font-semibold tracking-tight text-slate-950">Acesso negado</h1>
+        <p class="mt-3 text-slate-700">Você não tem permissão para acessar esta área do sistema.</p>
+        <div class="mt-6 flex flex-wrap gap-3">
+            <a th:if="${correntistaAtual != null}" th:href="@{/contas}"
+               class="rounded-lg bg-teal-700 px-5 py-3 font-semibold text-white hover:bg-teal-800">Ir para minhas contas</a>
+            <a th:href="@{/}"
+               class="rounded-lg border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-800 hover:bg-slate-100">Página inicial</a>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+</body>
+</html>

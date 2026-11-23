@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Locale;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +31,21 @@ public class CorrentistaService {
     @Transactional(readOnly = true)
     public List<Correntista> listarCorrentistas() {
         return correntistaRepository.findByPapelOrderByNomeAsc(Papel.CORRENTISTA);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Correntista> listarCorrentistas(Pageable pageable) {
+        return correntistaRepository.findByPapelOrderByNomeAsc(Papel.CORRENTISTA, pageable);
+    }
+
+    @Transactional
+    public Correntista alternarBloqueio(Long id) {
+        Correntista correntista = buscarPorId(id);
+        if (correntista.getPapel() == Papel.ADMIN) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é possível bloquear um administrador");
+        }
+        correntista.setBloqueado(!correntista.isBloqueado());
+        return correntistaRepository.saveAndFlush(correntista);
     }
 
     @Transactional(readOnly = true)

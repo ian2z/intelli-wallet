@@ -1,12 +1,15 @@
 package br.edu.ifpb.pweb2.intelliwallet.service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +19,8 @@ import org.springframework.web.server.ResponseStatusException;
 import br.edu.ifpb.pweb2.intelliwallet.model.Categoria;
 import br.edu.ifpb.pweb2.intelliwallet.model.Comentario;
 import br.edu.ifpb.pweb2.intelliwallet.model.Conta;
+import br.edu.ifpb.pweb2.intelliwallet.model.ExtratoConta;
+import br.edu.ifpb.pweb2.intelliwallet.model.ExtratoItem;
 import br.edu.ifpb.pweb2.intelliwallet.model.Movimento;
 import br.edu.ifpb.pweb2.intelliwallet.model.Natureza;
 import br.edu.ifpb.pweb2.intelliwallet.model.ResumoSaldo;
@@ -48,6 +53,42 @@ public class TransacaoService {
     @Transactional(readOnly = true)
     public List<Transacao> listarPorConta(Long contaId) {
         return transacaoRepository.findByContaIdOrderByDataDescIdDesc(contaId);
+    }
+
+    // UC07: Extrato da conta por período com paginação no banco de dados (RNF 07)
+    @Transactional(readOnly = true)
+    public ExtratoConta gerarExtrato(Long contaId, LocalDate dataInicio, LocalDate dataFim, Pageable pageable) {
+        Conta conta = buscarConta(contaId);
+        BigDecimal saldoInicial = transacaoRepository.calcularSaldoAnterior(contaId, dataInicio);
+        BigDecimal creditosPeriodo = transacaoRepository.somarPorContaPeriodoEMovimento(
+                contaId, dataInicio, dataFim, Movimento.CREDITO);
+        BigDecimal debitosPeriodo = transacaoRepository.somarPorContaPeriodoEMovimento(
+                contaId, dataInicio, dataFim, Movimento.DEBITO);
+        BigDecimal saldoFinal = saldoInicial.add(creditosPeriodo).subtract(debitosPeriodo);
+
+        Page<Transacao> pagina = transacaoRepository.findByContaIdAndDataBetweenOrderByDataAscIdAsc(
+                contaId, dataInicio, dataFim, pageable);
+
+        List<ExtratoItem> itens = new ArrayList<>();
+        if (!pagina.isEmpty()) {
+            Transacao primeira = pagina.getContent().get(0);
+            BigDecimal acumulado = saldoInicial;
+            if (pagina.getNumber() > 0) {
+                BigDecimal anteriorNaPagina = transacaoRepository.calcularSaldoNoPeriodoAntesDe(
+                        contaId, dataInicio, primeira.getData(), primeira.getId());
+                acumulado = acumulado.add(anteriorNaPagina);
+            }
+            for (Transacao t : pagina.getContent()) {
+                BigDecimal valor = t.getValor() != null ? t.getValor() : BigDecimal.ZERO;
+                acumulado = t.getMovimento() == Movimento.CREDITO
+                        ? acumulado.add(valor)
+                        : acumulado.subtract(valor);
+                itens.add(new ExtratoItem(t, acumulado));
+            }
+        }
+
+        return new ExtratoConta(conta, dataInicio, dataFim, saldoInicial, saldoFinal,
+                creditosPeriodo, debitosPeriodo, itens, pagina);
     }
 
     @Transactional(readOnly = true)

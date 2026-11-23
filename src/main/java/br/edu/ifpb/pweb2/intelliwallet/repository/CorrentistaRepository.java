@@ -2,8 +2,9 @@ package br.edu.ifpb.pweb2.intelliwallet.repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import br.edu.ifpb.pweb2.intelliwallet.model.Correntista;
@@ -20,5 +21,6 @@ public interface CorrentistaRepository extends JpaRepository<Correntista, Long> 
     boolean existsByLoginIgnoreCase(String login);
 
     List<Correntista> findByPapelOrderByNomeAsc(Papel papel);
-}
 
+    Page<Correntista> findByPapelOrderByNomeAsc(Papel papel, Pageable pageable);
+}

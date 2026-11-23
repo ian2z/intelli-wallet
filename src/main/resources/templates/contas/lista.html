@@ -12,7 +12,10 @@
             <h1 class="text-3xl font-semibold tracking-tight text-slate-950">Minhas contas</h1>
             <p class="mt-2 text-slate-700" th:text="|Contas de ${correntista.nome}|">Contas do correntista</p>
         </div>
-        <a th:href="@{/contas/nova}" class="rounded-lg bg-teal-700 px-5 py-3 font-semibold text-white hover:bg-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">Nova conta</a>
+        <div class="flex flex-wrap items-center gap-3">
+            <a th:href="@{/orcamento}" class="rounded-lg border border-slate-300 bg-white px-4 py-3 font-semibold text-slate-800 hover:bg-slate-100">Orçamento anual</a>
+            <a th:href="@{/contas/nova}" class="rounded-lg bg-teal-700 px-5 py-3 font-semibold text-white hover:bg-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">Nova conta</a>
+        </div>
     </div>
 
     <div th:if="${correntista != null}">
@@ -47,15 +50,23 @@
                         <td class="px-5 py-4">
                             <div class="flex flex-wrap items-center gap-3">
                                 <a th:href="@{/contas/{id}(id=${conta.id})}"
-                                   class="rounded-lg border border-slate-300 bg-white px-3 py-2 font-medium text-slate-700 hover:bg-slate-100">Ver transações</a>
+                                   class="rounded-lg border border-slate-300 bg-white px-3 py-2 font-medium text-slate-700 hover:bg-slate-100">Extrato</a>
                                 <a th:href="@{/contas/{id}/transacoes/nova(id=${conta.id})}"
                                    class="rounded-lg bg-teal-700 px-3 py-2 font-medium text-white hover:bg-teal-800">+ Nova transação</a>
+                                <form th:if="${administrador}" th:action="@{/contas/{id}/excluir(id=${conta.id})}" method="post"
+                                      th:data-descricao="${conta.descricao}"
+                                      onsubmit="return confirm('Deseja excluir a conta ' + this.getAttribute('data-descricao') + '? Todas as transações serão excluídas em cascata.');">
+                                    <button type="submit"
+                                            class="rounded-lg border border-slate-300 bg-white px-3 py-2 font-medium text-rose-700 hover:bg-slate-100">Excluir</button>
+                                </form>
                             </div>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
+
+        <div th:replace="~{fragments/paginacao :: controles(${pagina}, '/contas')}"></div>
     </div>
 </main>
 
