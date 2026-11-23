@@ -1,8 +1,10 @@
 package br.edu.ifpb.pweb2.intelliwallet;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
@@ -39,18 +41,17 @@ class ContasIntegrationTests {
     private ContaRepository contaRepository;
 
     @Test
-    void mostraEscolhaDeCorrentistaAntesDaListagem() throws Exception {
-        mockMvc.perform(get("/correntista"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("correntistas/selecao"))
-                .andExpect(model().attributeExists("correntistas"));
+    void redirecionaParaLoginSemAutenticacao() throws Exception {
+        mockMvc.perform(get("/contas"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/login"));
     }
 
     @Test
-    void listaApenasContasDoCorrentistaSelecionado() throws Exception {
+    void listaApenasContasDoCorrentistaAutenticado() throws Exception {
         Long id = correntistaRepository.findByLoginIgnoreCase("teste").orElseThrow().getId();
 
-        mockMvc.perform(get("/contas").sessionAttr("correntistaId", id))
+        mockMvc.perform(get("/contas").with(user("teste").roles("CORRENTISTA")))
                 .andExpect(status().isOk())
                 .andExpect(result -> {
                     @SuppressWarnings("unchecked")
@@ -75,9 +76,8 @@ class ContasIntegrationTests {
         contaDeOutro.setTipo(TipoConta.CORRENTE);
         contaDeOutro = contaRepository.saveAndFlush(contaDeOutro);
 
-        Long outroId = outro.getId();
         Long contaId = contaDeOutro.getId();
-        mockMvc.perform(get("/contas").sessionAttr("correntistaId", outroId))
+        mockMvc.perform(get("/contas").with(user("outro_teste_uc02").roles("CORRENTISTA")))
                 .andExpect(status().isOk())
                 .andExpect(result -> {
                     @SuppressWarnings("unchecked")
@@ -87,18 +87,8 @@ class ContasIntegrationTests {
     }
 
     @Test
-    void administradorNaoEntraNaListagemDeCorrentistas() throws Exception {
-        Long adminId = correntistaRepository.findByLoginIgnoreCase("admin").orElseThrow().getId();
-
-        mockMvc.perform(get("/correntista/{id}", adminId))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
     void incluiSaldosDasContasAoListarPorCorrentista() throws Exception {
-        Long id = correntistaRepository.findByLoginIgnoreCase("teste").orElseThrow().getId();
-
-        mockMvc.perform(get("/contas").sessionAttr("correntistaId", id))
+        mockMvc.perform(get("/contas").with(user("teste").roles("CORRENTISTA")))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("saldos"))
                 .andExpect(result -> {
@@ -109,14 +99,14 @@ class ContasIntegrationTests {
     }
 
     @Test
-    void exibeResumoComSaldoNaVisualizacaoDeTransacoesDaConta() throws Exception {
-        Conta conta = contaRepository.findAll().stream().findFirst().orElseThrow();
+    void exibeResumoEExtratoNaVisualizacaoDaConta() throws Exception {
+        Long id = correntistaRepository.findByLoginIgnoreCase("teste").orElseThrow().getId();
+        Conta conta = contaRepository.findByCorrentistaIdAndNumero(id, "1001-0").orElseThrow();
 
-        mockMvc.perform(get("/contas/{id}", conta.getId())
-                        .sessionAttr("correntistaId", conta.getCorrentista().getId()))
+        mockMvc.perform(get("/contas/{id}", conta.getId()).with(user("teste").roles("CORRENTISTA")))
                 .andExpect(status().isOk())
                 .andExpect(view().name("contas/transacoes"))
-                .andExpect(model().attributeExists("resumo"))
+                .andExpect(model().attributeExists("resumo", "extrato", "pagina"))
                 .andExpect(result -> {
                     ResumoSaldo resumo = (ResumoSaldo) result.getModelAndView().getModel().get("resumo");
                     assertThat(resumo).isNotNull();

@@ -44,16 +44,19 @@
                         <div class="flex flex-wrap items-center gap-3">
                             <a th:href="@{/correntistas/{id}/editar(id=${correntista.id})}"
                                class="rounded-lg border border-slate-300 bg-white px-3 py-2 font-medium text-slate-700 hover:bg-slate-100">Editar</a>
-                            <button type="button" disabled
-                                    class="rounded-lg border border-slate-300 bg-white px-3 py-2 font-medium text-slate-600"
-                                    title="Funcionalidade em desenvolvimento"
-                                    th:text="${correntista.bloqueado ? 'Desbloquear' : 'Bloquear'}">Bloquear</button>
+                            <form th:action="@{/correntistas/{id}/bloquear(id=${correntista.id}, pagina=${pagina.number})}" method="post"
+                                  th:data-nome="${correntista.nome}"
+                                  th:data-acao="${correntista.bloqueado ? 'desbloquear' : 'bloquear'}"
+                                  onsubmit="return confirm('Deseja ' + this.getAttribute('data-acao') + ' o correntista ' + this.getAttribute('data-nome') + '?');">
+                                <button type="submit"
+                                        class="rounded-lg border border-slate-300 bg-white px-3 py-2 font-medium text-slate-800 hover:bg-slate-100"
+                                        th:text="${correntista.bloqueado ? 'Desbloquear' : 'Bloquear'}">Bloquear</button>
+                            </form>
                             <form th:action="@{/correntistas/{id}/excluir(id=${correntista.id})}" method="post"
                                   th:data-nome="${correntista.nome}"
-                                  onsubmit="return confirm('Deseja realmente excluir o correntista ' + this.getAttribute('data-nome') + '? Todas as suas contas e transações serão removidas em cascata.');"
-                                  class="inline">
+                                  onsubmit="return confirm('Deseja realmente excluir o correntista ' + this.getAttribute('data-nome') + '? Todas as suas contas e transações serão removidas em cascata.');">
                                 <button type="submit"
-                                        class="rounded-lg border border-slate-300 bg-white px-3 py-2 font-medium text-rose-700 hover:bg-rose-50">Excluir</button>
+                                        class="rounded-lg border border-slate-300 bg-white px-3 py-2 font-medium text-rose-700 hover:bg-slate-100">Excluir</button>
                             </form>
                         </div>
                     </td>
@@ -61,6 +64,8 @@
             </tbody>
         </table>
     </div>
+
+    <div th:replace="~{fragments/paginacao :: controles(${pagina}, '/correntistas')}"></div>
 </main>
 
 <footer th:replace="~{fragments/layout :: rodape}"></footer>

@@ -20,7 +20,6 @@ import br.edu.ifpb.pweb2.intelliwallet.repository.TransacaoRepository;
 import br.edu.ifpb.pweb2.intelliwallet.service.ComentarioJaExisteException;
 import br.edu.ifpb.pweb2.intelliwallet.service.ComentarioService;
 import br.edu.ifpb.pweb2.intelliwallet.service.VisaoService;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 @Controller
@@ -39,8 +38,8 @@ public class ComentarioController {
     }
 
     @ModelAttribute
-    public void verificarVisao(@PathVariable Long transacaoId, HttpSession sessao) {
-        visaoService.verificarTransacao(transacaoId, sessao);
+    public void verificarVisao(@PathVariable Long transacaoId) {
+        visaoService.verificarTransacao(transacaoId);
     }
 
     @GetMapping("/novo")

@@ -1,5 +1,7 @@
 package br.edu.ifpb.pweb2.intelliwallet.controller;
 
+import java.time.YearMonth;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,7 +17,6 @@ import br.edu.ifpb.pweb2.intelliwallet.model.TransacaoForm;
 import br.edu.ifpb.pweb2.intelliwallet.service.TransacaoInvalidaException;
 import br.edu.ifpb.pweb2.intelliwallet.service.TransacaoService;
 import br.edu.ifpb.pweb2.intelliwallet.service.VisaoService;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 @Controller
@@ -31,8 +32,8 @@ public class TransacaoController {
     }
 
     @ModelAttribute
-    public void verificarVisao(@PathVariable Long contaId, HttpSession sessao) {
-        visaoService.verificarConta(contaId, sessao);
+    public void verificarVisao(@PathVariable Long contaId) {
+        visaoService.verificarConta(contaId);
     }
 
     // UC03, passos 2 e 3: correntista clica no "+" e o sistema mostra o formulário
@@ -51,14 +52,13 @@ public class TransacaoController {
             return exibirFormulario(contaId, null, model);
         }
         try {
-            transacaoService.criar(contaId, formulario);
+            var criada = transacaoService.criar(contaId, formulario);
+            atributos.addFlashAttribute("mensagem", "Transação registrada com sucesso.");
+            return "redirect:/contas/" + contaId + "?mes=" + YearMonth.from(criada.getData());
         } catch (TransacaoInvalidaException ex) {
             registrarErro(resultado, ex);
             return exibirFormulario(contaId, null, model);
         }
-        // P-R-G: depois de salvar, sempre redireciona
-        atributos.addFlashAttribute("mensagem", "Transação registrada com sucesso.");
-        return "redirect:/contas/" + contaId;
     }
 
     // UC04, passos 2 e 3: formulário com os dados atuais da transação
@@ -77,13 +77,13 @@ public class TransacaoController {
             return exibirFormulario(contaId, transacaoId, model);
         }
         try {
-            transacaoService.atualizar(contaId, transacaoId, formulario);
+            var atualizada = transacaoService.atualizar(contaId, transacaoId, formulario);
+            atributos.addFlashAttribute("mensagem", "Transação atualizada com sucesso.");
+            return "redirect:/contas/" + contaId + "?mes=" + YearMonth.from(atualizada.getData());
         } catch (TransacaoInvalidaException ex) {
             registrarErro(resultado, ex);
             return exibirFormulario(contaId, transacaoId, model);
         }
-        atributos.addFlashAttribute("mensagem", "Transação atualizada com sucesso.");
-        return "redirect:/contas/" + contaId;
     }
 
     // Mesmo formulário para criar (transacaoId == null) e editar (UC04 reaproveita o UC03)

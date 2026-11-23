@@ -9,13 +9,18 @@
 <main class="mx-auto max-w-6xl px-5 py-16 sm:py-24">
     <div class="max-w-3xl">
         <h1 class="text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">Suas contas, em um só lugar.</h1>
-        <p class="mt-6 max-w-2xl text-lg leading-relaxed text-slate-700">Cadastre-se para organizar contas correntes e cartões e registrar seus movimentos financeiros.</p>
-        <div class="mt-9 flex flex-wrap gap-3">
-            <a th:href="@{/cadastro}" class="rounded-lg bg-teal-700 px-5 py-3 font-semibold text-white hover:bg-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">Criar meu cadastro</a>
-            <a th:href="@{/correntista}" class="rounded-lg border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-800 hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">Entrar como correntista</a>
-            <a th:href="@{/admin}" class="rounded-lg border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-800 hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">Entrar como administrador</a>
+        <p class="mt-6 max-w-2xl text-lg leading-relaxed text-slate-700">Organize contas correntes e cartões, acompanhe extratos por período e visualize seu orçamento anual com clareza.</p>
+        <div class="mt-9 flex flex-wrap gap-3" th:if="${correntistaAtual == null}">
+            <a th:href="@{/login}" class="rounded-lg bg-teal-700 px-5 py-3 font-semibold text-white hover:bg-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">Entrar</a>
+            <a th:href="@{/cadastro}" class="rounded-lg border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-800 hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">Criar meu cadastro</a>
         </div>
-        <p class="mt-6 text-sm text-slate-600">Na Etapa I, escolha uma visão para demonstrar o sistema. O acesso com login e senha será implementado na Etapa II.</p>
+        <div class="mt-9 flex flex-wrap gap-3" th:if="${correntistaAtual != null}">
+            <a th:href="@{/contas}" class="rounded-lg bg-teal-700 px-5 py-3 font-semibold text-white hover:bg-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">Acessar minhas contas</a>
+            <a th:href="@{/orcamento}" class="rounded-lg border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-800 hover:bg-slate-100">Orçamento anual</a>
+            <a th:href="@{/grafico}" class="rounded-lg border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-800 hover:bg-slate-100">Gráfico anual</a>
+            <a th:if="${administrador}" th:href="@{/correntistas}" class="rounded-lg border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-800 hover:bg-slate-100">Gerenciar correntistas</a>
+            <a th:if="${administrador}" th:href="@{/categorias}" class="rounded-lg border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-800 hover:bg-slate-100">Gerenciar categorias</a>
+        </div>
     </div>
 </main>
 

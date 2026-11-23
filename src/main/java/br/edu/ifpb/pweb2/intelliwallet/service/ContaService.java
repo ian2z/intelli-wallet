@@ -3,8 +3,12 @@ package br.edu.ifpb.pweb2.intelliwallet.service;
 import java.util.List;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import br.edu.ifpb.pweb2.intelliwallet.model.Conta;
 import br.edu.ifpb.pweb2.intelliwallet.model.ContaForm;
@@ -24,6 +28,17 @@ public class ContaService {
     @Transactional(readOnly = true)
     public List<Conta> listarPorCorrentista(Long correntistaId) {
         return contaRepository.findByCorrentistaIdOrderByIdAsc(correntistaId);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Conta> listarPorCorrentista(Long correntistaId, Pageable pageable) {
+        return contaRepository.findByCorrentistaIdOrderByIdAsc(correntistaId, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Conta buscarPorId(Long id) {
+        return contaRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Conta não encontrada"));
     }
 
     @Transactional
@@ -50,5 +65,12 @@ public class ContaService {
         } catch (DataIntegrityViolationException ex) {
             throw new ContaInvalidaException("numero", "Você já possui uma conta com este número");
         }
+    }
+
+    @Transactional
+    public void excluir(Long id) {
+        Conta conta = buscarPorId(id);
+        contaRepository.delete(conta);
+        contaRepository.flush();
     }
 }
